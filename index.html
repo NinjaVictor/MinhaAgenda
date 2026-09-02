@@ -1,2233 +1,2218 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-  <title>Minha Agenda</title>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #f5f7fb;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --primary: #111827;
-      --danger: #ef4444;
-      --success: #22c55e;
-      --shadow: 0 8px 25px rgba(0,0,0,.06);
-    }
-
-    body.dark {
-      --bg: #0b1120;
-      --card: #111827;
-      --text: #f9fafb;
-      --muted: #9ca3af;
-      --border: #1f2937;
-      --primary: #f9fafb;
-      --shadow: 0 8px 25px rgba(0,0,0,.25);
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 95px;
-    }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
-
-    button {
-      border: none;
-      cursor: pointer;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 650px;
-      margin: auto;
-      padding: 18px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 22px;
-    }
-
-    .brand small {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: bold;
-      letter-spacing: 2px;
-      margin-bottom: 4px;
-    }
-
-    .brand h1 {
-      font-size: 25px;
-    }
-
-    .theme-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 14px;
-      background: var(--card);
-      color: var(--text);
-      box-shadow: var(--shadow);
-      font-size: 20px;
-    }
-
-    .hero {
-      background: var(--primary);
-      color: var(--bg);
-      border-radius: 25px;
-      padding: 25px;
-      margin-bottom: 18px;
-    }
-
-    body.dark .hero {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .hero .date {
-      font-size: 13px;
-      opacity: .7;
-      margin-bottom: 10px;
-    }
-
-    .hero h2 {
-      font-size: 26px;
-      margin-bottom: 8px;
-    }
-
-    .hero p {
-      font-size: 14px;
-      opacity: .7;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .stat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 15px 8px;
-      box-shadow: var(--shadow);
-      text-align: center;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 23px;
-      margin-bottom: 5px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 11px;
-    }
-
-    .section {
-      margin-bottom: 22px;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .section-title h3 {
-      font-size: 18px;
-    }
-
-    .section-title button {
-      background: transparent;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .empty {
-      text-align: center;
-      padding: 28px 15px;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .item:last-child {
-      border-bottom: none;
-    }
-
-    .item-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--primary);
-      margin-top: 6px;
-      flex-shrink: 0;
-    }
-
-    .item-content {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .item-title {
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 5px;
-    }
-
-    .item-info {
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
-    }
-
-    .delete-btn {
-      background: transparent;
-      color: var(--muted);
-      font-size: 18px;
-      padding: 3px;
-    }
-
-    .delete-btn:hover {
-      color: var(--danger);
-    }
-
-    .task-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .task-row:last-child {
-      border-bottom: none;
-    }
-
-    .task-check {
-      width: 22px;
-      height: 22px;
-      border: 2px solid var(--border);
-      border-radius: 7px;
-      background: transparent;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-
-    .task-check.done {
-      background: var(--success);
-      border-color: var(--success);
-    }
-
-    .task-text {
-      flex: 1;
-      font-size: 14px;
-    }
-
-    .task-text.done {
-      text-decoration: line-through;
-      color: var(--muted);
-    }
-
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      bottom: 12px;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
-      max-width: 620px;
-      height: 68px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 23px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.12);
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      z-index: 50;
-    }
-
-    .nav-btn {
-      background: transparent;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      font-size: 10px;
-    }
-
-    .nav-btn .icon {
-      font-size: 20px;
-    }
-
-    .nav-btn.active {
-      color: var(--text);
-      font-weight: bold;
-    }
-
-    .fab {
-      position: fixed;
-      right: 20px;
-      bottom: 95px;
-      width: 58px;
-      height: 58px;
-      border-radius: 20px;
-      background: var(--primary);
-      color: var(--bg);
-      font-size: 29px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.2);
-      z-index: 40;
-    }
-
-    body.dark .fab {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    .calendar-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: var(--shadow);
-      margin-bottom: 18px;
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .calendar-header strong {
-      font-size: 16px;
-      text-transform: capitalize;
-    }
-
-    .calendar-header button {
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .weekdays,
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-    }
-
-    .weekday {
-      text-align: center;
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: bold;
-      padding-bottom: 7px;
-    }
-
-    .day {
-      aspect-ratio: 1;
-      border-radius: 12px;
-      background: transparent;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      position: relative;
-    }
-
-    .day.today {
-      background: var(--primary);
-      color: var(--bg);
-      font-weight: bold;
-    }
-
-    body.dark .day.today {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .day.selected {
-      outline: 2px solid var(--primary);
-      outline-offset: -2px;
-    }
-
-    .day.has-event::after {
-      content: "";
-      position: absolute;
-      bottom: 4px;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--success);
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      color: var(--text);
-      border-radius: 13px;
-      padding: 12px;
-      outline: none;
-    }
-
-    .form-group textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.55);
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 100;
-    }
-
-    .modal.show {
-      display: flex;
-    }
-
-    .modal-box {
-      width: 100%;
-      max-width: 650px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background: var(--card);
-      color: var(--text);
-      border-radius: 28px 28px 0 0;
-      padding: 22px;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-
-    .modal-header h3 {
-      font-size: 20px;
-    }
-
-    .close-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      background: var(--bg);
-      color: var(--text);
-      font-size: 20px;
-    }
-
-    .save-btn {
-      width: 100%;
-      background: var(--primary);
-      color: var(--bg);
-      padding: 14px;
-      border-radius: 14px;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-
-    body.dark .save-btn {
-      background: #f9fafb;
-      color: #111827;
-    }
-
-    .search-box {
-      margin-bottom: 15px;
-    }
-
-    .search-box input {
-      width: 100%;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 15px;
-      padding: 13px;
-      outline: none;
-    }
-
-    .note {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .note-title {
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .note-text {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-    }
-
-    .note-footer {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 12px;
-    }
-
-    .loading {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      font-weight: bold;
-    }
-
-    .loading.hide {
-      display: none;
-    }
-
-    @media (min-width: 700px) {
-      .modal {
-        align-items: center;
-        padding: 20px;
-      }
-
-      .modal-box {
-        border-radius: 28px;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Minha Agenda</title>
+
+<style>
+:root{
+  --bg:#f5f7fb;
+  --card:#fff;
+  --text:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --p:#2563eb;
+  --soft:#eff6ff;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,sans-serif;
+  padding-bottom:80px;
+}
+
+.app{
+  max-width:760px;
+  margin:auto;
+  padding:18px;
+}
+
+header,.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+h1{font-size:24px}
+h2{font-size:20px}
+
+.hero,.card,.stat,.note{
+  background:var(--card);
+  border-radius:20px;
+  box-shadow:0 8px 30px #0000000d;
+  padding:17px;
+  margin-bottom:14px;
+}
+
+.hero{padding:22px}
+
+.hero .date{
+  color:var(--p);
+  font-weight:700;
+}
+
+.muted,small{
+  color:var(--muted);
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.stat strong{
+  font-size:24px;
+  display:block;
+}
+
+.stat span{
+  font-size:12px;
+  color:var(--muted);
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.icon{
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:var(--card);
+  color:var(--text);
+}
+
+.primary{
+  background:var(--p);
+  color:white;
+  border-radius:13px;
+  padding:11px 15px;
+  font-weight:700;
+}
+
+.edit{
+  background:var(--soft);
+  color:var(--p);
+  border-radius:10px;
+  padding:8px 11px;
+  font-weight:700;
+}
+
+.danger{
+  color:#dc2626;
+  background:transparent;
+  padding:8px 11px;
+}
+
+.list{
+  display:grid;
+  gap:10px;
+}
+
+.item{
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:13px;
+}
+
+.item-title{
+  font-weight:700;
+}
+
+.item-actions{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+
+.done{
+  text-decoration:line-through;
+  opacity:.5;
+}
+
+.task-line{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.task-line input{
+  width:20px;
+  height:20px;
+  margin-top:2px;
+}
+
+section{
+  display:none;
+}
+
+section.active{
+  display:block;
+}
+
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:var(--card);
+  border-top:1px solid var(--line);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  z-index:5;
+}
+
+.nav button{
+  background:transparent;
+  color:var(--muted);
+  padding:8px;
+  border-radius:12px;
+  font-size:12px;
+}
+
+.nav button.active{
+  background:var(--soft);
+  color:var(--p);
+  font-weight:700;
+}
+
+.fab{
+  position:fixed;
+  right:20px;
+  bottom:90px;
+  width:58px;
+  height:58px;
+  border-radius:20px;
+  background:var(--p);
+  color:#fff;
+  font-size:28px;
+  z-index:4;
+}
+
+.calendar-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.cal button{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:var(--soft);
+  color:var(--p);
+}
+
+.week,.days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+  text-align:center;
+}
+
+.week{
+  color:var(--muted);
+  font-size:12px;
+  margin:12px 0 5px;
+}
+
+.day{
+  min-height:40px;
+  border-radius:10px;
+  background:transparent;
+  color:var(--text);
+}
+
+.today{
+  background:var(--p);
+  color:#fff;
+}
+
+.has{
+  border:1px solid var(--p);
+}
+
+.notes{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.note{
+  margin:0;
+  box-shadow:none;
+  border:1px solid var(--line);
+  min-height:130px;
+}
+
+.note p{
+  white-space:pre-wrap;
+  color:var(--muted);
+  font-size:14px;
+}
+
+input,textarea,select{
+  width:100%;
+  padding:13px;
+  margin:6px 0 12px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--bg);
+  color:var(--text);
+}
+
+textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:#0008;
+  display:none;
+  align-items:flex-end;
+  z-index:10;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.box{
+  width:100%;
+  max-width:760px;
+  margin:auto;
+  background:var(--card);
+  border-radius:24px 24px 0 0;
+  padding:20px;
+  max-height:90vh;
+  overflow:auto;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+}
+
+.actions>*{
+  flex:1;
+}
+
+body.dark{
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#f9fafb;
+  --muted:#9ca3af;
+  --line:#263247;
+  --soft:#172554;
+}
+
+@media(min-width:650px){
+  .modal{
+    align-items:center;
+  }
+
+  .box{
+    border-radius:24px;
+    max-width:560px;
+  }
+
+  .notes{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div id="loading" class="loading">
-    Carregando sua agenda...
+<div class="app">
+
+<header>
+
+  <div>
+    <div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em;margin-bottom:6px">
+      ORGANIZAÇÃO
+    </div>
+
+    <h1 style="margin:0">
+      Minha Agenda
+    </h1>
   </div>
 
-  <main class="app">
-
-    <header class="topbar">
-      <div class="brand">
-        <small>ORGANIZAÇÃO</small>
-        <h1>Minha Agenda</h1>
-      </div>
-
-      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
-        🌙
-      </button>
-    </header>
-
-
-    <!-- INÍCIO -->
-    <section id="page-home" class="page active">
-
-      <div class="hero">
-        <div class="date" id="heroDate"></div>
-        <h2>Seu dia, do seu jeito.</h2>
-        <p>Organize compromissos, tarefas e anotações.</p>
-      </div>
-
-      <div class="stats">
-
-        <div class="stat">
-          <strong id="statEvents">0</strong>
-          <span>Compromissos</span>
-        </div>
-
-        <div class="stat">
-          <strong id="statTasks">0</strong>
-          <span>Tarefas abertas</span>
-        </div>
-
-        <div class="stat">
-          <strong id="statNotes">0</strong>
-          <span>Anotações</span>
-        </div>
-
-      </div>
-
-
-      <div class="section">
-
-        <div class="section-title">
-          <h3>Próximos compromissos</h3>
-          <button onclick="showPage('agenda')">
-            Ver todos
-          </button>
-        </div>
-
-        <div class="card" id="homeEvents"></div>
-
-      </div>
-
-
-      <div class="section">
-
-        <div class="section-title">
-          <h3>Tarefas de hoje</h3>
-          <button onclick="showPage('tasks')">
-            Ver todas
-          </button>
-        </div>
-
-        <div class="card" id="homeTasks"></div>
-
-      </div>
-
-    </section>
-
-
-    <!-- AGENDA -->
-    <section id="page-agenda" class="page">
-
-      <div class="section-title">
-
-        <h3>Agenda</h3>
-
-        <button onclick="openModal('event')">
-          + Novo
-        </button>
-
-      </div>
-
-
-      <div class="calendar-card">
-
-        <div class="calendar-header">
-
-          <button onclick="changeMonth(-1)">
-            ‹
-          </button>
-
-          <strong id="calendarTitle"></strong>
-
-          <button onclick="changeMonth(1)">
-            ›
-          </button>
-
-        </div>
-
-
-        <div class="weekdays">
-
-          <div class="weekday">DOM</div>
-          <div class="weekday">SEG</div>
-          <div class="weekday">TER</div>
-          <div class="weekday">QUA</div>
-          <div class="weekday">QUI</div>
-          <div class="weekday">SEX</div>
-          <div class="weekday">SÁB</div>
-
-        </div>
-
-
-        <div class="calendar-grid" id="calendarGrid"></div>
-
-      </div>
-
-
-      <div class="section-title">
-
-        <h3 id="selectedDateTitle">
-          Compromissos
-        </h3>
-
-      </div>
-
-
-      <div class="card" id="eventList"></div>
-
-    </section>
-
-
-    <!-- TAREFAS -->
-    <section id="page-tasks" class="page">
-
-      <div class="section-title">
-
-        <h3>Tarefas</h3>
-
-        <button onclick="openModal('task')">
-          + Nova
-        </button>
-
-      </div>
-
-      <div class="card" id="taskList"></div>
-
-    </section>
-
-
-    <!-- NOTAS -->
-    <section id="page-notes" class="page">
-
-      <div class="section-title">
-
-        <h3>Anotações</h3>
-
-        <button onclick="openModal('note')">
-          + Nova
-        </button>
-
-      </div>
-
-
-      <div class="search-box">
-
-        <input
-          type="text"
-          id="noteSearch"
-          placeholder="Pesquisar anotações..."
-          oninput="renderNotes()"
-        >
-
-      </div>
-
-
-      <div id="noteList"></div>
-
-    </section>
-
-  </main>
-
-
-  <!-- BOTÃO + -->
-  <button class="fab" onclick="openModal()">
-    +
+  <button class="icon" id="theme">
+    🌙
   </button>
 
-
-  <!-- MENU INFERIOR -->
-  <nav class="bottom-nav">
-
-    <button
-      class="nav-btn active"
-      data-page="home"
-      onclick="showPage('home')"
-    >
-      <span class="icon">⌂</span>
-      <span>Início</span>
-    </button>
+</header>
 
 
-    <button
-      class="nav-btn"
-      data-page="agenda"
-      onclick="showPage('agenda')"
-    >
-      <span class="icon">▣</span>
-      <span>Agenda</span>
-    </button>
+<!-- INÍCIO -->
 
+<section id="home" class="active">
 
-    <button
-      class="nav-btn"
-      data-page="tasks"
-      onclick="showPage('tasks')"
-    >
-      <span class="icon">✓</span>
-      <span>Tarefas</span>
-    </button>
+  <div class="hero">
 
+    <div class="date" id="date"></div>
 
-    <button
-      class="nav-btn"
-      data-page="notes"
-      onclick="showPage('notes')"
-    >
-      <span class="icon">☷</span>
-      <span>Notas</span>
-    </button>
+    <h2>
+      Seu dia, do seu jeito.
+    </h2>
 
-  </nav>
-
-
-  <!-- MODAL -->
-  <div class="modal" id="modal">
-
-    <div class="modal-box">
-
-      <div class="modal-header">
-
-        <h3 id="modalTitle">
-          Novo item
-        </h3>
-
-        <button class="close-btn" onclick="closeModal()">
-          ×
-        </button>
-
-      </div>
-
-
-      <form id="itemForm">
-
-        <input
-          type="hidden"
-          id="editId"
-        >
-
-
-        <div class="form-group">
-
-          <label>Tipo</label>
-
-          <select
-            id="itemType"
-            onchange="updateFormFields()"
-          >
-
-            <option value="event">
-              Compromisso
-            </option>
-
-            <option value="task">
-              Tarefa
-            </option>
-
-            <option value="note">
-              Anotação
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label for="itemTitle">
-            Título
-          </label>
-
-          <input
-            id="itemTitle"
-            type="text"
-            placeholder="Digite um título"
-            required
-          >
-
-        </div>
-
-
-        <div class="form-group" id="dateGroup">
-
-          <label for="itemDate">
-            Data
-          </label>
-
-          <input
-            id="itemDate"
-            type="date"
-          >
-
-        </div>
-
-
-        <div class="form-group" id="timeGroup">
-
-          <label for="itemTime">
-            Horário
-          </label>
-
-          <input
-            id="itemTime"
-            type="time"
-          >
-
-        </div>
-
-
-        <div class="form-group">
-
-          <label for="itemDescription">
-            Descrição
-          </label>
-
-          <textarea
-            id="itemDescription"
-            placeholder="Digite os detalhes..."
-          ></textarea>
-
-        </div>
-
-
-        <button
-          class="save-btn"
-          type="submit"
-        >
-          Salvar
-        </button>
-
-      </form>
-
+    <div class="muted">
+      Compromissos, tarefas e anotações em um só lugar.
     </div>
 
   </div>
 
 
-  <!-- FIREBASE -->
-  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+  <div class="stats">
 
-  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+    <div class="stat">
+      <strong id="ec">0</strong>
+      <span>Compromissos</span>
+    </div>
 
-  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+    <div class="stat">
+      <strong id="tc">0</strong>
+      <span>Tarefas abertas</span>
+    </div>
 
+    <div class="stat">
+      <strong id="nc">0</strong>
+      <span>Anotações</span>
+    </div>
 
-  <script>
-
-    // ==========================================
-    // CONFIGURAÇÃO DO FIREBASE
-    // ==========================================
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAsf0YLK7c5FOBuw8q05iETDIGTjANkHKE",
-      authDomain: "minha-agenda-253ad.firebaseapp.com",
-      projectId: "minha-agenda-253ad",
-      storageBucket: "minha-agenda-253ad.firebasestorage.app",
-      messagingSenderId: "56708978577",
-      appId: "1:56708978577:web:21180db43c6aa0b5122c30"
-    };
+  </div>
 
 
-    firebase.initializeApp(firebaseConfig);
+  <div class="card">
+
+    <h2>
+      Próximos compromissos
+    </h2>
+
+    <div id="up" class="list"></div>
+
+  </div>
 
 
-    const auth = firebase.auth();
+  <div class="card">
 
-    const db = firebase.firestore();
+    <h2>
+      Tarefas de hoje
+    </h2>
 
-    const agendaRef = db.collection("agenda");
+    <div id="today" class="list"></div>
 
+  </div>
 
-    // ==========================================
-    // VARIÁVEIS
-    // ==========================================
-
-    let currentUser = null;
-
-    let items = [];
-
-    let currentDate = new Date();
-
-    let selectedDate = new Date();
+</section>
 
 
-    // ==========================================
-    // DATA LOCAL
-    // ==========================================
+<!-- AGENDA -->
 
-    function localDateString(date = new Date()) {
+<section id="agenda">
 
-      const year = date.getFullYear();
+  <div class="card">
 
-      const month = String(
-        date.getMonth() + 1
-      ).padStart(2, "0");
+    <div class="calendar-head">
 
-      const day = String(
-        date.getDate()
-      ).padStart(2, "0");
+      <h2 id="month"></h2>
 
-      return `${year}-${month}-${day}`;
+      <div class="cal">
+
+        <button id="prev">
+          ‹
+        </button>
+
+        <button id="next">
+          ›
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="week">
+
+      <span>Dom</span>
+      <span>Seg</span>
+      <span>Ter</span>
+      <span>Qua</span>
+      <span>Qui</span>
+      <span>Sex</span>
+      <span>Sáb</span>
+
+    </div>
+
+
+    <div id="cal" class="days"></div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="row">
+
+      <h2>
+        Compromissos
+      </h2>
+
+      <button
+        class="primary"
+        data-new="event">
+        + Novo
+      </button>
+
+    </div>
+
+    <div id="events" class="list"></div>
+
+  </div>
+
+</section>
+
+
+<!-- TAREFAS -->
+
+<section id="tasks">
+
+  <div class="card">
+
+    <div class="row">
+
+      <h2>
+        Tarefas
+      </h2>
+
+      <button
+        class="primary"
+        data-new="task">
+        + Nova
+      </button>
+
+    </div>
+
+    <div id="tasksList" class="list"></div>
+
+  </div>
+
+</section>
+
+
+<!-- NOTAS -->
+
+<section id="notes">
+
+  <div class="card">
+
+    <div class="row">
+
+      <h2>
+        Anotações
+      </h2>
+
+      <button
+        class="primary"
+        data-new="note">
+        + Nova
+      </button>
+
+    </div>
+
+
+    <input
+      id="search"
+      placeholder="🔎 Pesquisar anotações...">
+
+
+    <div
+      id="notesList"
+      class="notes">
+    </div>
+
+  </div>
+
+</section>
+
+</div>
+
+
+<!-- BOTÃO + -->
+
+<button
+  class="fab"
+  id="fab">
+  +
+</button>
+
+
+<!-- MENU -->
+
+<nav class="nav">
+
+  <button
+    class="active"
+    data-go="home">
+    🏠<br>
+    Início
+  </button>
+
+  <button data-go="agenda">
+    📅<br>
+    Agenda
+  </button>
+
+  <button data-go="tasks">
+    ☑️<br>
+    Tarefas
+  </button>
+
+  <button data-go="notes">
+    📝<br>
+    Notas
+  </button>
+
+</nav>
+
+
+<!-- JANELA DE ADICIONAR / EDITAR -->
+
+<div
+  class="modal"
+  id="modal">
+
+  <div class="box">
+
+    <div class="row">
+
+      <h2 id="mtitle">
+        Novo
+      </h2>
+
+      <button
+        class="icon"
+        id="close">
+        ✕
+      </button>
+
+    </div>
+
+    <form id="form"></form>
+
+  </div>
+
+</div>
+
+
+<!-- FIREBASE -->
+
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+
+
+<script>
+
+/* =========================
+   FIREBASE
+========================= */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyAsf0YLK7c5FOBuw8q05iETDIGTjANkHKE",
+
+  authDomain:
+    "minha-agenda-253ad.firebaseapp.com",
+
+  projectId:
+    "minha-agenda-253ad",
+
+  storageBucket:
+    "minha-agenda-253ad.firebasestorage.app",
+
+  messagingSenderId:
+    "56708978577",
+
+  appId:
+    "1:56708978577:web:21180db43c6aa0b5122c30"
+
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+
+const auth =
+  firebase.auth();
+
+const db =
+  firebase.firestore();
+
+
+/* =========================
+   VARIÁVEIS
+========================= */
+
+let D = {
+
+  events: [],
+  tasks: [],
+  notes: []
+
+};
+
+let M = new Date();
+
+let TYPE = "event";
+
+let EDIT_ID = null;
+
+let ready = false;
+
+
+/* =========================
+   ATALHOS
+========================= */
+
+const $ =
+  selector =>
+    document.querySelector(selector);
+
+const $$ =
+  selector =>
+    document.querySelectorAll(selector);
+
+
+/* =========================
+   DATA DE HOJE
+========================= */
+
+function today(){
+
+  const d =
+    new Date();
+
+  return (
+    d.getFullYear() +
+    "-" +
+    String(d.getMonth()+1).padStart(2,"0") +
+    "-" +
+    String(d.getDate()).padStart(2,"0")
+  );
+
+}
+
+
+/* =========================
+   SEGURANÇA HTML
+========================= */
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(
+      /[&<>"']/g,
+      c => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
+      }[c])
+    );
+
+}
+
+
+/* =========================
+   FORMATAÇÃO
+========================= */
+
+function fmt(date){
+
+  if(!date)
+    return "";
+
+  return new Date(
+    date + "T12:00:00"
+  ).toLocaleDateString(
+    "pt-BR",
+    {
+      day:"2-digit",
+      month:"2-digit",
+      year:"numeric"
     }
+  );
+
+}
 
 
-    // ==========================================
-    // DATA FORMATADA
-    // ==========================================
+/* =========================
+   RENDERIZAR TAREFA
+========================= */
 
-    function formatDate(dateString) {
+function task(t){
 
-      if (!dateString) return "";
+  return `
 
-      const parts = dateString.split("-");
+    <div class="item">
 
-      if (parts.length !== 3) return dateString;
+      <div class="task-line">
 
-      const date = new Date(
-        Number(parts[0]),
-        Number(parts[1]) - 1,
-        Number(parts[2])
-      );
+        <input
+          type="checkbox"
+          data-toggle="${esc(t.id)}"
+          ${t.done ? "checked" : ""}>
 
-      return date.toLocaleDateString(
-        "pt-BR",
-        {
-          weekday: "long",
-          day: "2-digit",
-          month: "long"
-        }
-      );
-    }
+        <div style="flex:1">
+
+          <div class="${t.done ? "done" : ""}">
+            <b>${esc(t.title)}</b>
+          </div>
+
+          <small>
+            ${esc(t.date || "Sem data")}
+            •
+            ${esc(t.priority || "Normal")}
+          </small>
+
+        </div>
+
+      </div>
 
 
-    // ==========================================
-    // LOGIN AUTOMÁTICO
-    // ==========================================
+      <div class="item-actions">
 
-    auth.onAuthStateChanged(async user => {
+        <button
+          class="edit"
+          data-edit-task="${esc(t.id)}">
+          ✏️ Editar
+        </button>
 
-      if (user) {
+        <button
+          class="danger"
+          data-dt="${esc(t.id)}">
+          🗑️ Excluir
+        </button>
 
-        currentUser = user;
+      </div>
 
-        iniciarSincronizacao();
+    </div>
 
-      } else {
+  `;
 
-        try {
+}
 
-          await auth.signInAnonymously();
 
-        } catch (error) {
+/* =========================
+   RENDERIZAÇÃO
+========================= */
 
-          console.error(error);
+function render(){
 
-          alert(
-            "Não foi possível conectar ao Firebase. Verifique se o login anônimo está ativado."
-          );
+  const n =
+    new Date();
 
-          document
-            .getElementById("loading")
-            .classList.add("hide");
-        }
 
+  $("#date").textContent =
+    n.toLocaleDateString(
+      "pt-BR",
+      {
+        weekday:"long",
+        day:"numeric",
+        month:"long"
       }
+    );
+
+
+  $("#ec").textContent =
+    D.events.length;
+
+
+  $("#tc").textContent =
+    D.tasks.filter(
+      x => !x.done
+    ).length;
+
+
+  $("#nc").textContent =
+    D.notes.length;
+
+
+  /* PRÓXIMOS EVENTOS */
+
+  let ev =
+    [...D.events]
+      .filter(
+        e =>
+          new Date(
+            e.date +
+            "T" +
+            (e.time || "23:59")
+          ) >= n
+      )
+      .sort(
+        (a,b) =>
+          (a.date+a.time)
+            .localeCompare(
+              b.date+b.time
+            )
+      )
+      .slice(0,5);
+
+
+  $("#up").innerHTML =
+    ev.length
+
+    ?
+
+    ev.map(e => `
+
+      <div class="item">
+
+        <div class="item-title">
+          ${esc(e.title)}
+        </div>
+
+        <small>
+          ${fmt(e.date)}
+          ${e.time ? " • " + esc(e.time) : ""}
+          ${e.location ? " • " + esc(e.location) : ""}
+        </small>
+
+        <div class="item-actions">
+
+          <button
+            class="edit"
+            data-edit-event="${esc(e.id)}">
+            ✏️ Editar
+          </button>
+
+          <button
+            class="danger"
+            data-de="${esc(e.id)}">
+            🗑️ Excluir
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    `
+      <div class="muted">
+        Nenhum compromisso próximo.
+      </div>
+    `;
+
+
+  /* TAREFAS DE HOJE */
+
+  let tt =
+    D.tasks.filter(
+      x => x.date == today()
+    );
+
+
+  $("#today").innerHTML =
+    tt.length
+    ?
+    tt.map(task).join("")
+    :
+    `
+      <div class="muted">
+        Nenhuma tarefa para hoje.
+      </div>
+    `;
+
+
+  /* TODAS AS TAREFAS */
+
+  $("#tasksList").innerHTML =
+    D.tasks.length
+    ?
+    D.tasks.map(task).join("")
+    :
+    `
+      <div class="muted">
+        Nenhuma tarefa cadastrada.
+      </div>
+    `;
+
+
+  /* EVENTOS */
+
+  let events =
+    [...D.events].sort(
+      (a,b) =>
+        (a.date+a.time)
+          .localeCompare(
+            b.date+b.time
+          )
+    );
+
+
+  $("#events").innerHTML =
+    events.length
+
+    ?
+
+    events.map(e => `
+
+      <div class="item">
+
+        <div class="item-title">
+          ${esc(e.title)}
+        </div>
+
+        <small>
+          📅 ${fmt(e.date)}
+          ${e.time ? " • ⏰ " + esc(e.time) : ""}
+          ${e.location ? " • 📍 " + esc(e.location) : ""}
+        </small>
+
+        ${
+          e.notes
+          ?
+          `<div class="muted" style="margin-top:7px">
+            ${esc(e.notes)}
+          </div>`
+          :
+          ""
+        }
+
+
+        <div class="item-actions">
+
+          <button
+            class="edit"
+            data-edit-event="${esc(e.id)}">
+            ✏️ Editar
+          </button>
+
+          <button
+            class="danger"
+            data-de="${esc(e.id)}">
+            🗑️ Excluir
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    `
+      <div class="muted">
+        Nenhum compromisso cadastrado.
+      </div>
+    `;
+
+
+  /* CALENDÁRIO */
+
+  let y =
+    M.getFullYear();
+
+  let m =
+    M.getMonth();
+
+  let days =
+    new Date(
+      y,
+      m + 1,
+      0
+    ).getDate();
+
+  let first =
+    new Date(
+      y,
+      m,
+      1
+    ).getDay();
+
+
+  $("#month").textContent =
+    new Date(
+      y,
+      m,
+      1
+    ).toLocaleDateString(
+      "pt-BR",
+      {
+        month:"long",
+        year:"numeric"
+      }
+    );
+
+
+  let c = "";
+
+
+  for(
+    let i=0;
+    i<first;
+    i++
+  ){
+
+    c += "<span></span>";
+
+  }
+
+
+  for(
+    let d=1;
+    d<=days;
+    d++
+  ){
+
+    let ds =
+      y +
+      "-" +
+      String(m+1).padStart(2,"0") +
+      "-" +
+      String(d).padStart(2,"0");
+
+
+    let has =
+      D.events.some(
+        e => e.date == ds
+      );
+
+
+    c += `
+
+      <button
+        class="day ${
+          ds == today()
+          ? "today "
+          : ""
+        }${
+          has
+          ? "has"
+          : ""
+        }"
+        data-day="${ds}">
+        ${d}
+      </button>
+
+    `;
+
+  }
+
+
+  $("#cal").innerHTML =
+    c;
+
+
+  /* NOTAS */
+
+  let q =
+    ($("#search").value || "")
+      .toLowerCase();
+
+
+  let ns =
+    D.notes.filter(
+      x =>
+        (
+          (x.title || "") +
+          " " +
+          (x.text || "")
+        )
+        .toLowerCase()
+        .includes(q)
+    );
+
+
+  $("#notesList").innerHTML =
+    ns.length
+
+    ?
+
+    ns.map(x => `
+
+      <div class="note">
+
+        <div class="row">
+
+          <b>
+            ${esc(x.title)}
+          </b>
+
+        </div>
+
+        <p>
+          ${esc(x.text)}
+        </p>
+
+        <div class="item-actions">
+
+          <button
+            class="edit"
+            data-edit-note="${esc(x.id)}">
+            ✏️ Editar
+          </button>
+
+          <button
+            class="danger"
+            data-dn="${esc(x.id)}">
+            🗑️ Excluir
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("")
+
+    :
+
+    `
+      <div class="muted">
+        Nenhuma anotação encontrada.
+      </div>
+    `;
+
+}
+
+
+/* =========================
+   NAVEGAÇÃO
+========================= */
+
+function go(id){
+
+  $$("section")
+    .forEach(
+      x =>
+        x.classList.remove("active")
+    );
+
+
+  $("#" + id)
+    .classList.add("active");
+
+
+  $$("[data-go]")
+    .forEach(
+      x =>
+        x.classList.toggle(
+          "active",
+          x.dataset.go == id
+        )
+    );
+
+
+  render();
+
+}
+
+
+$$("[data-go]")
+  .forEach(
+    x =>
+      x.onclick =
+        () => go(x.dataset.go)
+  );
+
+
+/* =========================
+   TEMA
+========================= */
+
+$("#theme").onclick = () => {
+
+  document.body
+    .classList.toggle("dark");
+
+  localStorage.setItem(
+    "dark",
+    document.body
+      .classList.contains("dark")
+  );
+
+};
+
+
+if(
+  localStorage.getItem("dark")
+  ==
+  "true"
+){
+
+  document.body
+    .classList.add("dark");
+
+}
+
+
+/* =========================
+   ABRIR FORMULÁRIO
+========================= */
+
+function open(
+  type,
+  date = "",
+  edit = null
+){
+
+  TYPE =
+    type;
+
+  EDIT_ID =
+    edit
+    ?
+    edit.id
+    :
+    null;
+
+
+  $("#modal")
+    .classList.add("show");
+
+
+  $("#mtitle").textContent =
+    edit
+
+    ?
+
+    (
+      type == "event"
+      ?
+      "Editar compromisso"
+      :
+      type == "task"
+      ?
+      "Editar tarefa"
+      :
+      "Editar anotação"
+    )
+
+    :
+
+    (
+      type == "event"
+      ?
+      "Novo compromisso"
+      :
+      type == "task"
+      ?
+      "Nova tarefa"
+      :
+      "Nova anotação"
+    );
+
+
+  let f =
+    $("#form");
+
+
+  /* COMPROMISSO */
+
+  if(type == "event"){
+
+    f.innerHTML = `
+
+      <label>
+        Título
+
+        <input
+          name="title"
+          required
+          value="${esc(edit?.title || "")}">
+      </label>
+
+
+      <label>
+        Data
+
+        <input
+          name="date"
+          type="date"
+          required
+          value="${esc(
+            edit?.date ||
+            date ||
+            today()
+          )}">
+      </label>
+
+
+      <label>
+        Horário
+
+        <input
+          name="time"
+          type="time"
+          value="${esc(
+            edit?.time || ""
+          )}">
+      </label>
+
+
+      <label>
+        Local
+
+        <input
+          name="location"
+          value="${esc(
+            edit?.location || ""
+          )}">
+      </label>
+
+
+      <label>
+        Observações
+
+        <textarea
+          name="notes">${esc(
+            edit?.notes || ""
+          )}</textarea>
+
+      </label>
+
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="icon"
+          id="cancel">
+          Cancelar
+        </button>
+
+        <button
+          class="primary">
+          💾 Salvar
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* TAREFA */
+
+  if(type == "task"){
+
+    f.innerHTML = `
+
+      <label>
+        Tarefa
+
+        <input
+          name="title"
+          required
+          value="${esc(
+            edit?.title || ""
+          )}">
+      </label>
+
+
+      <label>
+        Data
+
+        <input
+          name="date"
+          type="date"
+          value="${esc(
+            edit?.date ||
+            date ||
+            today()
+          )}">
+      </label>
+
+
+      <label>
+        Prioridade
+
+        <select name="priority">
+
+          <option
+            value="Normal"
+            ${
+              (edit?.priority || "Normal")
+              ==
+              "Normal"
+              ?
+              "selected"
+              :
+              ""
+            }>
+            Normal
+          </option>
+
+          <option
+            value="Alta"
+            ${
+              edit?.priority == "Alta"
+              ?
+              "selected"
+              :
+              ""
+            }>
+            Alta
+          </option>
+
+          <option
+            value="Baixa"
+            ${
+              edit?.priority == "Baixa"
+              ?
+              "selected"
+              :
+              ""
+            }>
+            Baixa
+          </option>
+
+        </select>
+
+      </label>
+
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="icon"
+          id="cancel">
+          Cancelar
+        </button>
+
+        <button
+          class="primary">
+          💾 Salvar
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* ANOTAÇÃO */
+
+  if(type == "note"){
+
+    f.innerHTML = `
+
+      <label>
+        Título
+
+        <input
+          name="title"
+          required
+          value="${esc(
+            edit?.title || ""
+          )}">
+      </label>
+
+
+      <label>
+        Texto
+
+        <textarea
+          name="text"
+          required>${esc(
+            edit?.text || ""
+          )}</textarea>
+
+      </label>
+
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="icon"
+          id="cancel">
+          Cancelar
+        </button>
+
+        <button
+          class="primary">
+          💾 Salvar
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  $("#cancel").onclick =
+    close;
+
+}
+
+
+/* =========================
+   FECHAR
+========================= */
+
+function close(){
+
+  $("#modal")
+    .classList.remove("show");
+
+  EDIT_ID = null;
+
+}
+
+
+$("#close").onclick =
+  close;
+
+
+/* =========================
+   ADICIONAR
+========================= */
+
+async function addDoc(
+  type,
+  o
+){
+
+  if(!auth.currentUser)
+    return;
+
+
+  const ref =
+    db.collection("agenda").doc();
+
+
+  o.id =
+    ref.id;
+
+  o.type =
+    type;
+
+  o.userId =
+    auth.currentUser.uid;
+
+  o.createdAt =
+    firebase.firestore
+      .FieldValue
+      .serverTimestamp();
+
+
+  await ref.set(o);
+
+}
+
+
+/* =========================
+   EXCLUIR
+========================= */
+
+async function delDoc(id){
+
+  await db
+    .collection("agenda")
+    .doc(id)
+    .delete();
+
+}
+
+
+/* =========================
+   EDITAR
+========================= */
+
+async function updateDoc(
+  id,
+  data
+){
+
+  await db
+    .collection("agenda")
+    .doc(id)
+    .update({
+
+      ...data,
+
+      updatedAt:
+        firebase.firestore
+          .FieldValue
+          .serverTimestamp()
 
     });
 
-
-    // ==========================================
-    // SINCRONIZAÇÃO FIRESTORE
-    // ==========================================
-
-    function iniciarSincronizacao() {
-
-      agendaRef
-        .orderBy("createdAt", "desc")
-        .onSnapshot(
-          snapshot => {
-
-            items = [];
-
-            snapshot.forEach(doc => {
-
-              items.push({
-                firestoreId: doc.id,
-                ...doc.data()
-              });
-
-            });
+}
 
 
-            renderAll();
+/* =========================
+   SALVAR FORMULÁRIO
+========================= */
+
+$("#form").onsubmit =
+  async e => {
+
+    e.preventDefault();
 
 
-            document
-              .getElementById("loading")
-              .classList.add("hide");
-
-          },
-
-          error => {
-
-            console.error(error);
-
-            document
-              .getElementById("loading")
-              .classList.add("hide");
-
-            alert(
-              "Erro ao sincronizar a agenda com o Firebase."
-            );
-
-          }
-        );
-
-    }
+    if(!ready)
+      return;
 
 
-    // ==========================================
-    // NAVEGAÇÃO
-    // ==========================================
-
-    function showPage(page) {
-
-      document
-        .querySelectorAll(".page")
-        .forEach(element => {
-
-          element.classList.remove("active");
-
-        });
-
-
-      const target =
-        document.getElementById(
-          "page-" + page
-        );
-
-
-      if (target) {
-
-        target.classList.add("active");
-
-      }
-
-
-      document
-        .querySelectorAll(".nav-btn")
-        .forEach(button => {
-
-          button.classList.remove("active");
-
-          if (
-            button.dataset.page === page
-          ) {
-
-            button.classList.add("active");
-
-          }
-
-        });
-
-
-      if (page === "agenda") {
-
-        renderCalendar();
-
-        renderEvents();
-
-      }
-
-      if (page === "tasks") {
-
-        renderTasks();
-
-      }
-
-      if (page === "notes") {
-
-        renderNotes();
-
-      }
-
-    }
-
-
-    // ==========================================
-    // TEMA
-    // ==========================================
-
-    function toggleTheme() {
-
-      document.body.classList.toggle("dark");
-
-      const dark =
-        document.body.classList.contains("dark");
-
-
-      localStorage.setItem(
-        "darkMode",
-        dark ? "1" : "0"
+    let o =
+      Object.fromEntries(
+        new FormData(e.target)
       );
 
 
-      document.getElementById(
-        "themeBtn"
-      ).textContent = dark ? "☀️" : "🌙";
+    try{
 
-    }
+      /* EDITANDO */
 
+      if(EDIT_ID){
 
-    function loadTheme() {
+        if(TYPE == "task"){
 
-      const dark =
-        localStorage.getItem("darkMode") === "1";
-
-
-      if (dark) {
-
-        document.body.classList.add("dark");
-
-        document.getElementById(
-          "themeBtn"
-        ).textContent = "☀️";
-
-      }
-
-    }
+          const old =
+            D.tasks.find(
+              x =>
+                x.id ==
+                EDIT_ID
+            );
 
 
-    // ==========================================
-    // MODAL
-    // ==========================================
+          o.done =
+            old
+            ?
+            !!old.done
+            :
+            false;
 
-    function openModal(type = "event") {
-
-      const modal =
-        document.getElementById("modal");
-
-
-      document
-        .getElementById("itemForm")
-        .reset();
+        }
 
 
-      document
-        .getElementById("editId")
-        .value = "";
-
-
-      document
-        .getElementById("itemType")
-        .value = type;
-
-
-      document
-        .getElementById("itemDate")
-        .value =
-        localDateString(selectedDate);
-
-
-      document
-        .getElementById("modalTitle")
-        .textContent =
-        type === "event"
-          ? "Novo compromisso"
-          : type === "task"
-            ? "Nova tarefa"
-            : "Nova anotação";
-
-
-      updateFormFields();
-
-
-      modal.classList.add("show");
-
-    }
-
-
-    function closeModal() {
-
-      document
-        .getElementById("modal")
-        .classList.remove("show");
-
-    }
-
-
-    function updateFormFields() {
-
-      const type =
-        document.getElementById(
-          "itemType"
-        ).value;
-
-
-      const dateGroup =
-        document.getElementById(
-          "dateGroup"
+        await updateDoc(
+          EDIT_ID,
+          o
         );
 
+      }
 
-      const timeGroup =
-        document.getElementById(
-          "timeGroup"
+
+      /* NOVO */
+
+      else{
+
+        if(TYPE == "task"){
+
+          o.done =
+            false;
+
+        }
+
+
+        await addDoc(
+          TYPE,
+          o
         );
 
-
-      if (type === "event") {
-
-        dateGroup.style.display = "block";
-
-        timeGroup.style.display = "block";
-
       }
 
-      else {
 
-        dateGroup.style.display = "none";
+      close();
 
-        timeGroup.style.display = "none";
 
-      }
+    }catch(err){
+
+      console.error(err);
+
+      alert(
+        "Não foi possível salvar. " +
+        "Verifique sua conexão."
+      );
+
+    }
+
+  };
+
+
+/* =========================
+   CLIQUES
+========================= */
+
+document.addEventListener(
+  "click",
+  async e => {
+
+    /* NOVO */
+
+    let n =
+      e.target.closest(
+        "[data-new]"
+      );
+
+
+    if(n){
+
+      open(
+        n.dataset.new
+      );
+
+      return;
 
     }
 
 
-    // ==========================================
-    // SALVAR
-    // ==========================================
+    /* EXCLUIR TAREFA */
 
-    document
-      .getElementById("itemForm")
-      .addEventListener("submit", async event => {
-
-        event.preventDefault();
+    let d =
+      e.target.closest(
+        "[data-dt]"
+      );
 
 
-        if (!currentUser) {
+    if(d){
 
-          alert("Aguarde a conexão com o Firebase.");
+      if(
+        confirm(
+          "Excluir esta tarefa?"
+        )
+      ){
 
-          return;
+        try{
 
-        }
+          await delDoc(
+            d.dataset.dt
+          );
 
-
-        const type =
-          document.getElementById(
-            "itemType"
-          ).value;
-
-
-        const title =
-          document.getElementById(
-            "itemTitle"
-          ).value.trim();
-
-
-        const description =
-          document.getElementById(
-            "itemDescription"
-          ).value.trim();
-
-
-        const date =
-          document.getElementById(
-            "itemDate"
-          ).value;
-
-
-        const time =
-          document.getElementById(
-            "itemTime"
-          ).value;
-
-
-        const editId =
-          document.getElementById(
-            "editId"
-          ).value;
-
-
-        if (!title) {
-
-          alert("Digite um título.");
-
-          return;
-
-        }
-
-
-        const data = {
-
-          type: type,
-
-          title: title,
-
-          description: description,
-
-          date:
-            type === "event"
-              ? date
-              : "",
-
-          time:
-            type === "event"
-              ? time
-              : "",
-
-          completed: false,
-
-          userId: currentUser.uid,
-
-          createdAt:
-            firebase.firestore.FieldValue.serverTimestamp()
-
-        };
-
-
-        try {
-
-          if (editId) {
-
-            await agendaRef
-              .doc(editId)
-              .update(data);
-
-          }
-
-          else {
-
-            await agendaRef
-              .add(data);
-
-          }
-
-
-          closeModal();
-
-        }
-
-        catch (error) {
-
-          console.error(error);
+        }catch(err){
 
           alert(
-            "Erro ao salvar. Tente novamente."
+            "Erro ao excluir."
           );
 
         }
 
-      });
-
-
-    // ==========================================
-    // EXCLUIR
-    // ==========================================
-
-    async function deleteItem(id) {
-
-      if (!confirm("Excluir este item?")) {
-
-        return;
-
       }
 
-
-      try {
-
-        await agendaRef
-          .doc(id)
-          .delete();
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        alert(
-          "Não foi possível excluir."
-        );
-
-      }
+      return;
 
     }
 
 
-    // ==========================================
-    // CONCLUIR TAREFA
-    // ==========================================
+    /* EXCLUIR EVENTO */
 
-    async function toggleTask(id, completed) {
-
-      try {
-
-        await agendaRef
-          .doc(id)
-          .update({
-            completed: !completed
-          });
-
-      }
-
-      catch (error) {
-
-        console.error(error);
-
-        alert(
-          "Não foi possível atualizar a tarefa."
-        );
-
-      }
-
-    }
-
-
-    // ==========================================
-    // CALENDÁRIO
-    // ==========================================
-
-    function changeMonth(direction) {
-
-      currentDate.setMonth(
-        currentDate.getMonth() + direction
+    let de =
+      e.target.closest(
+        "[data-de]"
       );
 
-      renderCalendar();
+
+    if(de){
+
+      if(
+        confirm(
+          "Excluir este compromisso?"
+        )
+      ){
+
+        try{
+
+          await delDoc(
+            de.dataset.de
+          );
+
+        }catch(err){
+
+          alert(
+            "Erro ao excluir."
+          );
+
+        }
+
+      }
+
+      return;
 
     }
 
 
-    function renderCalendar() {
+    /* EXCLUIR NOTA */
 
-      const year =
-        currentDate.getFullYear();
+    let dn =
+      e.target.closest(
+        "[data-dn]"
+      );
 
-      const month =
-        currentDate.getMonth();
+
+    if(dn){
+
+      if(
+        confirm(
+          "Excluir esta anotação?"
+        )
+      ){
+
+        try{
+
+          await delDoc(
+            dn.dataset.dn
+          );
+
+        }catch(err){
+
+          alert(
+            "Erro ao excluir."
+          );
+
+        }
+
+      }
+
+      return;
+
+    }
 
 
-      const monthName =
-        currentDate.toLocaleDateString(
-          "pt-BR",
+    /* CONCLUIR TAREFA */
+
+    let tg =
+      e.target.closest(
+        "[data-toggle]"
+      );
+
+
+    if(tg){
+
+      try{
+
+        await updateDoc(
+          tg.dataset.toggle,
           {
-            month: "long",
-            year: "numeric"
+            done:
+              tg.checked
           }
         );
 
+      }catch(err){
 
-      document.getElementById(
-        "calendarTitle"
-      ).textContent = monthName;
-
-
-      const grid =
-        document.getElementById(
-          "calendarGrid"
+        alert(
+          "Erro ao atualizar."
         );
-
-
-      grid.innerHTML = "";
-
-
-      const firstDay =
-        new Date(
-          year,
-          month,
-          1
-        ).getDay();
-
-
-      const daysInMonth =
-        new Date(
-          year,
-          month + 1,
-          0
-        ).getDate();
-
-
-      for (
-        let i = 0;
-        i < firstDay;
-        i++
-      ) {
-
-        const empty =
-          document.createElement("div");
-
-        grid.appendChild(empty);
 
       }
 
+      return;
 
-      const today =
-        localDateString();
-
-
-      for (
-        let day = 1;
-        day <= daysInMonth;
-        day++
-      ) {
-
-        const dateString =
-          `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    }
 
 
-        const button =
-          document.createElement("button");
+    /* EDITAR EVENTO */
+
+    let ee =
+      e.target.closest(
+        "[data-edit-event]"
+      );
 
 
-        button.className = "day";
+    if(ee){
 
-        button.textContent = day;
-
-
-        if (dateString === today) {
-
-          button.classList.add("today");
-
-        }
+      let x =
+        D.events.find(
+          v =>
+            v.id ==
+            ee.dataset.editEvent
+        );
 
 
-        if (
-          dateString ===
-          localDateString(selectedDate)
-        ) {
+      if(x){
 
-          button.classList.add("selected");
+        open(
+          "event",
+          "",
+          x
+        );
 
-        }
+      }
 
+      return;
 
-        if (
-          items.some(
-            item =>
-              item.type === "event" &&
-              item.date === dateString
-          )
-        ) {
-
-          button.classList.add("has-event");
-
-        }
+    }
 
 
-        button.onclick = () => {
+    /* EDITAR TAREFA */
 
-          selectedDate =
-            new Date(
-              year,
-              month,
-              day
-            );
+    let et =
+      e.target.closest(
+        "[data-edit-task]"
+      );
 
-          renderCalendar();
 
-          renderEvents();
+    if(et){
 
+      let x =
+        D.tasks.find(
+          v =>
+            v.id ==
+            et.dataset.editTask
+        );
+
+
+      if(x){
+
+        open(
+          "task",
+          "",
+          x
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    /* EDITAR NOTA */
+
+    let en =
+      e.target.closest(
+        "[data-edit-note]"
+      );
+
+
+    if(en){
+
+      let x =
+        D.notes.find(
+          v =>
+            v.id ==
+            en.dataset.editNote
+        );
+
+
+      if(x){
+
+        open(
+          "note",
+          "",
+          x
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    /* CLICAR NO DIA */
+
+    let day =
+      e.target.closest(
+        "[data-day]"
+      );
+
+
+    if(day){
+
+      open(
+        "event",
+        day.dataset.day
+      );
+
+    }
+
+  }
+);
+
+
+/* =========================
+   CALENDÁRIO
+========================= */
+
+$("#prev").onclick =
+  () => {
+
+    M.setMonth(
+      M.getMonth() - 1
+    );
+
+    render();
+
+  };
+
+
+$("#next").onclick =
+  () => {
+
+    M.setMonth(
+      M.getMonth() + 1
+    );
+
+    render();
+
+  };
+
+
+/* =========================
+   PESQUISA
+========================= */
+
+$("#search").oninput =
+  render;
+
+
+/* =========================
+   BOTÃO +
+========================= */
+
+$("#fab").onclick =
+  () => open("event");
+
+
+/* =========================
+   FIREBASE EM TEMPO REAL
+========================= */
+
+function listen(){
+
+  db.collection("agenda")
+    .onSnapshot(
+
+      snapshot => {
+
+        D = {
+          events: [],
+          tasks: [],
+          notes: []
         };
 
 
-        grid.appendChild(button);
+        snapshot.forEach(
+          doc => {
 
-      }
+            const x =
+              doc.data();
 
-    }
 
+            x.id =
+              doc.id;
 
-    // ==========================================
-    // COMPROMISSOS
-    // ==========================================
 
-    function renderEvents() {
+            if(x.type == "event"){
 
-      const date =
-        localDateString(selectedDate);
+              D.events.push(x);
 
+            }
 
-      document.getElementById(
-        "selectedDateTitle"
-      ).textContent =
-        "Compromissos de " +
-        selectedDate.toLocaleDateString(
-          "pt-BR"
-        );
+            else if(
+              x.type == "task"
+            ){
 
+              D.tasks.push(x);
 
-      const list =
-        document.getElementById(
-          "eventList"
-        );
+            }
 
+            else if(
+              x.type == "note"
+            ){
 
-      const events =
-        items
-          .filter(
-            item =>
-              item.type === "event" &&
-              item.date === date
-          )
-          .sort(
-            (a, b) =>
-              (a.time || "")
-                .localeCompare(
-                  b.time || ""
-                )
-          );
+              D.notes.push(x);
 
+            }
 
-      if (!events.length) {
-
-        list.innerHTML = `
-          <div class="empty">
-            Nenhum compromisso para este dia.
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      list.innerHTML =
-        events
-          .map(event => `
-
-            <div class="item">
-
-              <div class="item-dot"></div>
-
-              <div class="item-content">
-
-                <div class="item-title">
-                  ${escapeHtml(event.title)}
-                </div>
-
-                <div class="item-info">
-
-                  ${event.time
-                    ? "🕐 " +
-                      escapeHtml(event.time)
-                    : ""
-                  }
-
-                  ${
-                    event.description
-                      ? "<br>" +
-                        escapeHtml(
-                          event.description
-                        )
-                      : ""
-                  }
-
-                </div>
-
-              </div>
-
-              <button
-                class="delete-btn"
-                onclick="deleteItem('${event.firestoreId}')"
-              >
-                ×
-              </button>
-
-            </div>
-
-          `)
-          .join("");
-
-    }
-
-
-    // ==========================================
-    // TAREFAS
-    // ==========================================
-
-    function renderTasks() {
-
-      const list =
-        document.getElementById(
-          "taskList"
-        );
-
-
-      const tasks =
-        items.filter(
-          item =>
-            item.type === "task"
-        );
-
-
-      if (!tasks.length) {
-
-        list.innerHTML = `
-          <div class="empty">
-            Nenhuma tarefa cadastrada.
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      list.innerHTML =
-        tasks
-          .map(task => `
-
-            <div class="task-row">
-
-              <button
-                class="task-check ${
-                  task.completed
-                    ? "done"
-                    : ""
-                }"
-                onclick="toggleTask(
-                  '${task.firestoreId}',
-                  ${task.completed ? "true" : "false"}
-                )"
-              >
-                ${
-                  task.completed
-                    ? "✓"
-                    : ""
-                }
-              </button>
-
-
-              <div
-                class="task-text ${
-                  task.completed
-                    ? "done"
-                    : ""
-                }"
-              >
-                ${escapeHtml(task.title)}
-              </div>
-
-
-              <button
-                class="delete-btn"
-                onclick="deleteItem('${task.firestoreId}')"
-              >
-                ×
-              </button>
-
-            </div>
-
-          `)
-          .join("");
-
-    }
-
-
-    // ==========================================
-    // NOTAS
-    // ==========================================
-
-    function renderNotes() {
-
-      const list =
-        document.getElementById(
-          "noteList"
-        );
-
-
-      const search =
-        document
-          .getElementById("noteSearch")
-          .value
-          .toLowerCase()
-          .trim();
-
-
-      const notes =
-        items.filter(note => {
-
-          if (note.type !== "note") {
-
-            return false;
-
-          }
-
-
-          if (!search) {
-
-            return true;
-
-          }
-
-
-          return (
-            (note.title || "")
-              .toLowerCase()
-              .includes(search)
-            ||
-            (note.description || "")
-              .toLowerCase()
-              .includes(search)
-          );
-
-        });
-
-
-      if (!notes.length) {
-
-        list.innerHTML = `
-          <div class="empty">
-            Nenhuma anotação encontrada.
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      list.innerHTML =
-        notes
-          .map(note => `
-
-            <div class="note">
-
-              <div class="note-title">
-                ${escapeHtml(note.title)}
-              </div>
-
-
-              <div class="note-text">
-                ${escapeHtml(
-                  note.description || ""
-                )}
-              </div>
-
-
-              <div class="note-footer">
-
-                <button
-                  class="delete-btn"
-                  onclick="deleteItem('${note.firestoreId}')"
-                >
-                  Excluir
-                </button>
-
-              </div>
-
-            </div>
-
-          `)
-          .join("");
-
-    }
-
-
-    // ==========================================
-    // PÁGINA INICIAL
-    // ==========================================
-
-    function renderHome() {
-
-      const now =
-        new Date();
-
-
-      document.getElementById(
-        "heroDate"
-      ).textContent =
-        now.toLocaleDateString(
-          "pt-BR",
-          {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
           }
         );
 
 
-      const events =
-        items.filter(
-          item =>
-            item.type === "event"
+        ready = true;
+
+        render();
+
+      },
+
+      error => {
+
+        console.error(error);
+
+        alert(
+          "Erro ao sincronizar a agenda."
         );
-
-
-      const openTasks =
-        items.filter(
-          item =>
-            item.type === "task" &&
-            !item.completed
-        );
-
-
-      const notes =
-        items.filter(
-          item =>
-            item.type === "note"
-        );
-
-
-      document.getElementById(
-        "statEvents"
-      ).textContent =
-        events.length;
-
-
-      document.getElementById(
-        "statTasks"
-      ).textContent =
-        openTasks.length;
-
-
-      document.getElementById(
-        "statNotes"
-      ).textContent =
-        notes.length;
-
-
-      const homeEvents =
-        document.getElementById(
-          "homeEvents"
-        );
-
-
-      const today =
-        localDateString();
-
-
-      const upcoming =
-        events
-          .filter(
-            event =>
-              event.date >= today
-          )
-          .sort(
-            (a, b) =>
-              (
-                a.date +
-                (a.time || "")
-              ).localeCompare(
-                b.date +
-                (b.time || "")
-              )
-          )
-          .slice(0, 5);
-
-
-      if (!upcoming.length) {
-
-        homeEvents.innerHTML = `
-          <div class="empty">
-            Nenhum compromisso próximo.
-          </div>
-        `;
 
       }
 
-      else {
+    );
 
-        homeEvents.innerHTML =
-          upcoming
-            .map(event => `
-
-              <div class="item">
-
-                <div class="item-dot"></div>
-
-                <div class="item-content">
-
-                  <div class="item-title">
-                    ${escapeHtml(event.title)}
-                  </div>
-
-                  <div class="item-info">
-
-                    ${formatDate(event.date)}
-
-                    ${
-                      event.time
-                        ? " • " +
-                          escapeHtml(
-                            event.time
-                          )
-                        : ""
-                    }
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            `)
-            .join("");
-
-      }
+}
 
 
-      const homeTasks =
-        document.getElementById(
-          "homeTasks"
-        );
+/* =========================
+   LOGIN ANÔNIMO
+========================= */
 
+async function startApp(){
 
-      const todayTasks =
-        openTasks.slice(0, 5);
+  try{
 
+    if(!auth.currentUser){
 
-      if (!todayTasks.length) {
-
-        homeTasks.innerHTML = `
-          <div class="empty">
-            Nenhuma tarefa pendente.
-          </div>
-        `;
-
-      }
-
-      else {
-
-        homeTasks.innerHTML =
-          todayTasks
-            .map(task => `
-
-              <div class="task-row">
-
-                <button
-                  class="task-check"
-                  onclick="toggleTask(
-                    '${task.firestoreId}',
-                    false
-                  )"
-                >
-                </button>
-
-                <div class="task-text">
-                  ${escapeHtml(task.title)}
-                </div>
-
-              </div>
-
-            `)
-            .join("");
-
-      }
+      await auth
+        .signInAnonymously();
 
     }
 
 
-    // ==========================================
-    // RENDER GERAL
-    // ==========================================
-
-    function renderAll() {
-
-      renderHome();
-
-      renderCalendar();
-
-      renderEvents();
-
-      renderTasks();
-
-      renderNotes();
-
-    }
+    listen();
 
 
-    // ==========================================
-    // PROTEÇÃO CONTRA HTML
-    // ==========================================
+  }catch(err){
 
-    function escapeHtml(value) {
+    console.error(err);
 
-      return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    alert(
+      "Não foi possível conectar à agenda.\n\n" +
+      "Verifique se o login anônimo está ativado no Firebase."
+    );
 
-    }
+  }
+
+}
 
 
-    // ==========================================
-    // FECHAR MODAL CLICANDO FORA
-    // ==========================================
+/* =========================
+   INICIAR
+========================= */
 
-    document
-      .getElementById("modal")
-      .addEventListener(
-        "click",
-        event => {
+startApp();
 
-          if (
-            event.target.id === "modal"
-          ) {
-
-            closeModal();
-
-          }
-
-        }
-      );
-
-
-    // ==========================================
-    // INICIALIZAÇÃO
-    // ==========================================
-
-    loadTheme();
-
-    renderHome();
-
-  </script>
+</script>
 
 </body>
 </html>
