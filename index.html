@@ -310,6 +310,11 @@ section.active{
   border:1px solid var(--p);
 }
 
+.day.selected{
+  outline:3px solid var(--p);
+  outline-offset:1px;
+}
+
 .notes{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -511,7 +516,7 @@ body.dark{
   <div class="card">
 
     <h2>
-      Próximos compromissos
+      Compromissos de hoje
     </h2>
 
     <div
@@ -590,15 +595,30 @@ body.dark{
 
     <div class="row">
 
-      <h2>
+      <h2 id="eventsTitle">
         Compromissos
       </h2>
 
-      <button
-        class="primary"
-        data-new="event">
-        + Novo
-      </button>
+      <div style="display:flex;gap:6px">
+
+        <button
+          class="edit"
+          id="showAll"
+          style="display:none">
+
+          Ver todos
+
+        </button>
+
+        <button
+          class="primary"
+          data-new="event">
+
+          + Novo
+
+        </button>
+
+      </div>
 
     </div>
 
@@ -896,6 +916,9 @@ let EDIT_ID =
 let ready =
   false;
 
+let selectedDate =
+  null;
+
 
 /* =========================
    ATALHOS
@@ -1106,33 +1129,23 @@ function render(){
     D.notes.length;
 
 
-  /* PRÓXIMOS EVENTOS */
+  /* COMPROMISSOS DE HOJE */
 
   let ev =
     [...D.events]
       .filter(
         e =>
-          new Date(
-            e.date +
-            "T" +
-            (
-              e.time ||
-              "23:59"
-            )
-          ) >= n
+          e.date == today()
       )
       .sort(
         (a,b) =>
           (
-            a.date +
-            a.time
+            a.time || ""
           )
           .localeCompare(
-            b.date +
-            b.time
+            b.time || ""
           )
-      )
-      .slice(0,5);
+      );
 
 
   $("#up").innerHTML =
@@ -1203,7 +1216,7 @@ function render(){
     `
 
       <div class="muted">
-        Nenhum compromisso próximo.
+        Nenhum compromisso para hoje.
       </div>
 
     `;
@@ -1261,18 +1274,32 @@ function render(){
   /* EVENTOS */
 
   let events =
-    [...D.events]
-      .sort(
-        (a,b) =>
-          (
-            a.date +
-            a.time
-          )
-          .localeCompare(
-            b.date +
-            b.time
-          )
+    [...D.events];
+
+  if(selectedDate){
+
+    events =
+      events.filter(
+        e =>
+          e.date ==
+          selectedDate
       );
+
+  }
+
+
+  events =
+    events.sort(
+      (a,b) =>
+        (
+          a.date +
+          (a.time || "")
+        )
+        .localeCompare(
+          b.date +
+          (b.time || "")
+        )
+    );
 
 
   $("#events").innerHTML =
@@ -1361,10 +1388,40 @@ function render(){
     `
 
       <div class="muted">
-        Nenhum compromisso cadastrado.
+
+        ${
+          selectedDate
+          ?
+          "Nenhum compromisso neste dia."
+          :
+          "Nenhum compromisso cadastrado."
+        }
+
       </div>
 
     `;
+
+
+  /* TÍTULO DOS COMPROMISSOS */
+
+  if(selectedDate){
+
+    $("#eventsTitle").textContent =
+      "Compromissos de " +
+      fmt(selectedDate);
+
+    $("#showAll").style.display =
+      "block";
+
+  }else{
+
+    $("#eventsTitle").textContent =
+      "Compromissos";
+
+    $("#showAll").style.display =
+      "none";
+
+  }
 
 
   /* CALENDÁRIO */
@@ -1456,7 +1513,11 @@ function render(){
           : ""
         }${
           has
-          ? "has"
+          ? "has "
+          : ""
+        }${
+          ds == selectedDate
+          ? "selected"
           : ""
         }"
         data-day="${ds}">
@@ -2501,7 +2562,7 @@ document.addEventListener(
     }
 
 
-    /* CLICAR NO DIA */
+    /* CLICAR NO DIA DO CALENDÁRIO */
 
     let day =
       e.target.closest(
@@ -2511,10 +2572,10 @@ document.addEventListener(
 
     if(day){
 
-      open(
-        "event",
-        day.dataset.day
-      );
+      selectedDate =
+        day.dataset.day;
+
+      render();
 
       return;
 
@@ -2522,6 +2583,21 @@ document.addEventListener(
 
   }
 );
+
+
+/* =========================
+   VER TODOS OS COMPROMISSOS
+========================= */
+
+$("#showAll").onclick =
+  () => {
+
+    selectedDate =
+      null;
+
+    render();
+
+  };
 
 
 /* =========================
@@ -2535,6 +2611,9 @@ $("#prev").onclick =
       M.getMonth() - 1
     );
 
+    selectedDate =
+      null;
+
     render();
 
   };
@@ -2546,6 +2625,9 @@ $("#next").onclick =
     M.setMonth(
       M.getMonth() + 1
     );
+
+    selectedDate =
+      null;
 
     render();
 
