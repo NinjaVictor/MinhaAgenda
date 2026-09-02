@@ -1,1728 +1,2233 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#111827">
-<title>Minha Agenda</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<style>
-:root{
---bg:#f5f7fb;
---card:#fff;
---text:#111827;
---muted:#6b7280;
---line:#e5e7eb;
---p:#2563eb;
---soft:#eff6ff
-}
+  <title>Minha Agenda</title>
 
-*{box-sizing:border-box}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body{
-margin:0;
-background:var(--bg);
-color:var(--text);
-font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-padding-bottom:90px
-}
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #111827;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --shadow: 0 8px 25px rgba(0,0,0,.06);
+    }
 
-.app{
-max-width:760px;
-margin:auto;
-padding:18px
-}
+    body.dark {
+      --bg: #0b1120;
+      --card: #111827;
+      --text: #f9fafb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --primary: #f9fafb;
+      --shadow: 0 8px 25px rgba(0,0,0,.25);
+    }
 
-header,.row{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px
-}
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 95px;
+    }
 
-h1{font-size:24px}
-h2{font-size:20px}
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
 
-.hero,.card,.stat,.note{
-background:var(--card);
-border-radius:20px;
-box-shadow:0 8px 30px #0000000d;
-padding:17px;
-margin-bottom:14px
-}
+    button {
+      border: none;
+      cursor: pointer;
+    }
 
-.hero{padding:22px}
+    .app {
+      width: 100%;
+      max-width: 650px;
+      margin: auto;
+      padding: 18px;
+    }
 
-.hero .date{
-color:var(--p);
-font-weight:700
-}
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
 
-.muted,small{
-color:var(--muted)
-}
+    .brand small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
 
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px
-}
+    .brand h1 {
+      font-size: 25px;
+    }
 
-.stat strong{
-font-size:24px;
-display:block
-}
+    .theme-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      font-size: 20px;
+    }
 
-.stat span{
-font-size:12px;
-color:var(--muted)
-}
+    .hero {
+      background: var(--primary);
+      color: var(--bg);
+      border-radius: 25px;
+      padding: 25px;
+      margin-bottom: 18px;
+    }
 
-button{
-border:0;
-cursor:pointer
-}
+    body.dark .hero {
+      background: #f9fafb;
+      color: #111827;
+    }
 
-.icon{
-width:42px;
-height:42px;
-border-radius:14px;
-background:var(--card);
-color:var(--text)
-}
+    .hero .date {
+      font-size: 13px;
+      opacity: .7;
+      margin-bottom: 10px;
+    }
 
-.primary{
-background:var(--p);
-color:white;
-border-radius:13px;
-padding:11px 15px;
-font-weight:700
-}
+    .hero h2 {
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
 
-.list{
-display:grid;
-gap:10px
-}
+    .hero p {
+      font-size: 14px;
+      opacity: .7;
+    }
 
-.item{
-border:1px solid var(--line);
-border-radius:15px;
-padding:13px
-}
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
 
-.danger{
-color:#dc2626;
-background:transparent
-}
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 15px 8px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
 
-.done{
-text-decoration:line-through;
-opacity:.5
-}
+    .stat strong {
+      display: block;
+      font-size: 23px;
+      margin-bottom: 5px;
+    }
 
-section{
-display:none
-}
+    .stat span {
+      color: var(--muted);
+      font-size: 11px;
+    }
 
-section.active{
-display:block
-}
+    .section {
+      margin-bottom: 22px;
+    }
 
-.nav{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-background:var(--card);
-border-top:1px solid var(--line);
-display:grid;
-grid-template-columns:repeat(4,1fr);
-padding:8px 8px calc(8px + env(safe-area-inset-bottom));
-z-index:5
-}
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
 
-.nav button{
-background:transparent;
-color:var(--muted);
-padding:8px;
-border-radius:12px;
-font-size:12px
-}
+    .section-title h3 {
+      font-size: 18px;
+    }
 
-.nav button.active{
-background:var(--soft);
-color:var(--p);
-font-weight:700
-}
+    .section-title button {
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-.fab{
-position:fixed;
-right:20px;
-bottom:90px;
-width:58px;
-height:58px;
-border-radius:20px;
-background:var(--p);
-color:#fff;
-font-size:28px;
-z-index:4
-}
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
 
-.calendar-head{
-display:flex;
-justify-content:space-between;
-align-items:center
-}
+    .empty {
+      text-align: center;
+      padding: 28px 15px;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-.cal button{
-width:34px;
-height:34px;
-border-radius:10px;
-background:var(--soft);
-color:var(--p)
-}
+    .item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
 
-.week,.days{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:5px;
-text-align:center
-}
+    .item:last-child {
+      border-bottom: none;
+    }
 
-.week{
-color:var(--muted);
-font-size:12px;
-margin:12px 0 5px
-}
+    .item-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
 
-.day{
-min-height:40px;
-border-radius:10px;
-background:transparent;
-color:var(--text)
-}
+    .item-content {
+      flex: 1;
+      min-width: 0;
+    }
 
-.today{
-background:var(--p);
-color:#fff
-}
+    .item-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
 
-.has{
-border:1px solid var(--p)
-}
+    .item-info {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
 
-.notes{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px
-}
+    .delete-btn {
+      background: transparent;
+      color: var(--muted);
+      font-size: 18px;
+      padding: 3px;
+    }
 
-.note{
-margin:0;
-box-shadow:none;
-border:1px solid var(--line);
-min-height:130px
-}
+    .delete-btn:hover {
+      color: var(--danger);
+    }
 
-.note p{
-white-space:pre-wrap;
-color:var(--muted);
-font-size:14px
-}
+    .task-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
 
-input,textarea,select{
-width:100%;
-padding:13px;
-margin:6px 0 12px;
-border:1px solid var(--line);
-border-radius:13px;
-background:var(--bg);
-color:var(--text)
-}
+    .task-row:last-child {
+      border-bottom: none;
+    }
 
-textarea{
-min-height:110px
-}
+    .task-check {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--border);
+      border-radius: 7px;
+      background: transparent;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
 
-.modal{
-position:fixed;
-inset:0;
-background:#0008;
-display:none;
-align-items:flex-end;
-z-index:10
-}
+    .task-check.done {
+      background: var(--success);
+      border-color: var(--success);
+    }
 
-.modal.show{
-display:flex
-}
+    .task-text {
+      flex: 1;
+      font-size: 14px;
+    }
 
-.box{
-width:100%;
-max-width:760px;
-margin:auto;
-background:var(--card);
-border-radius:24px 24px 0 0;
-padding:20px;
-max-height:90vh;
-overflow:auto
-}
+    .task-text.done {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
 
-.actions{
-display:flex;
-gap:10px
-}
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      transform: translateX(-50%);
+      width: calc(100% - 24px);
+      max-width: 620px;
+      height: 68px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 23px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.12);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      z-index: 50;
+    }
 
-.actions>*{
-flex:1
-}
+    .nav-btn {
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      font-size: 10px;
+    }
 
-body.dark{
---bg:#0b1220;
---card:#111827;
---text:#f9fafb;
---muted:#9ca3af;
---line:#263247;
---soft:#172554
-}
+    .nav-btn .icon {
+      font-size: 20px;
+    }
 
-#loginScreen{
-position:fixed;
-inset:0;
-background:var(--bg);
-z-index:50;
-overflow:auto
-}
+    .nav-btn.active {
+      color: var(--text);
+      font-weight: bold;
+    }
 
-.login-box{
-max-width:420px;
-margin:0 auto;
-padding:40px 18px
-}
+    .fab {
+      position: fixed;
+      right: 20px;
+      bottom: 95px;
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background: var(--primary);
+      color: var(--bg);
+      font-size: 29px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.2);
+      z-index: 40;
+    }
 
-.error{
-color:#dc2626;
-font-size:14px
-}
+    body.dark .fab {
+      background: #f9fafb;
+      color: #111827;
+    }
 
-.success{
-color:#16a34a;
-font-size:14px
-}
+    .page {
+      display: none;
+    }
 
-@media(min-width:650px){
-.modal{
-align-items:center
-}
+    .page.active {
+      display: block;
+    }
 
-.box{
-border-radius:24px;
-max-width:560px
-}
+    .calendar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
 
-.notes{
-grid-template-columns:repeat(3,1fr)
-}
-}
-</style>
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .calendar-header strong {
+      font-size: 16px;
+      text-transform: capitalize;
+    }
+
+    .calendar-header button {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+
+    .weekday {
+      text-align: center;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: bold;
+      padding-bottom: 7px;
+    }
+
+    .day {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      position: relative;
+    }
+
+    .day.today {
+      background: var(--primary);
+      color: var(--bg);
+      font-weight: bold;
+    }
+
+    body.dark .day.today {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .day.selected {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+    }
+
+    .day.has-event::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 13px;
+      padding: 12px;
+      outline: none;
+    }
+
+    .form-group textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background: var(--card);
+      color: var(--text);
+      border-radius: 28px 28px 0 0;
+      padding: 22px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      font-size: 20px;
+    }
+
+    .close-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 20px;
+    }
+
+    .save-btn {
+      width: 100%;
+      background: var(--primary);
+      color: var(--bg);
+      padding: 14px;
+      border-radius: 14px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    body.dark .save-btn {
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .search-box {
+      margin-bottom: 15px;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 15px;
+      padding: 13px;
+      outline: none;
+    }
+
+    .note {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .note-title {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .note-text {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .note-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .loading {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      font-weight: bold;
+    }
+
+    .loading.hide {
+      display: none;
+    }
+
+    @media (min-width: 700px) {
+      .modal {
+        align-items: center;
+        padding: 20px;
+      }
+
+      .modal-box {
+        border-radius: 28px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="app">
+  <div id="loading" class="loading">
+    Carregando sua agenda...
+  </div>
 
-<header>
-<div>
-<div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em;margin-bottom:6px">
-ORGANIZAÇÃO
-</div>
+  <main class="app">
 
-<h1 style="margin:0">
-Minha Agenda
-</h1>
-</div>
+    <header class="topbar">
+      <div class="brand">
+        <small>ORGANIZAÇÃO</small>
+        <h1>Minha Agenda</h1>
+      </div>
 
-<div style="display:flex;gap:8px">
-<button class="icon" id="theme" aria-label="Alternar tema">🌙</button>
-<button class="icon" id="logout" aria-label="Sair">↪</button>
-</div>
-</header>
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+        🌙
+      </button>
+    </header>
 
 
-<section id="home" class="active">
+    <!-- INÍCIO -->
+    <section id="page-home" class="page active">
 
-<div class="hero">
-<div class="date" id="date"></div>
+      <div class="hero">
+        <div class="date" id="heroDate"></div>
+        <h2>Seu dia, do seu jeito.</h2>
+        <p>Organize compromissos, tarefas e anotações.</p>
+      </div>
 
-<h2>
-Seu dia, do seu jeito.
-</h2>
+      <div class="stats">
 
-<div class="muted">
-Compromissos, tarefas e anotações em um só lugar.
-</div>
-</div>
+        <div class="stat">
+          <strong id="statEvents">0</strong>
+          <span>Compromissos</span>
+        </div>
 
+        <div class="stat">
+          <strong id="statTasks">0</strong>
+          <span>Tarefas abertas</span>
+        </div>
 
-<div class="stats">
+        <div class="stat">
+          <strong id="statNotes">0</strong>
+          <span>Anotações</span>
+        </div>
 
-<div class="stat">
-<strong id="ec">0</strong>
-<span>Compromissos</span>
-</div>
+      </div>
 
-<div class="stat">
-<strong id="tc">0</strong>
-<span>Tarefas abertas</span>
-</div>
 
-<div class="stat">
-<strong id="nc">0</strong>
-<span>Anotações</span>
-</div>
+      <div class="section">
 
-</div>
+        <div class="section-title">
+          <h3>Próximos compromissos</h3>
+          <button onclick="showPage('agenda')">
+            Ver todos
+          </button>
+        </div>
 
+        <div class="card" id="homeEvents"></div>
 
-<div class="card">
+      </div>
 
-<h2>
-Próximos compromissos
-</h2>
 
-<div id="up" class="list"></div>
+      <div class="section">
 
-</div>
+        <div class="section-title">
+          <h3>Tarefas de hoje</h3>
+          <button onclick="showPage('tasks')">
+            Ver todas
+          </button>
+        </div>
 
+        <div class="card" id="homeTasks"></div>
 
-<div class="card">
+      </div>
 
-<h2>
-Tarefas de hoje
-</h2>
+    </section>
 
-<div id="today" class="list"></div>
 
-</div>
+    <!-- AGENDA -->
+    <section id="page-agenda" class="page">
 
-</section>
+      <div class="section-title">
 
+        <h3>Agenda</h3>
 
+        <button onclick="openModal('event')">
+          + Novo
+        </button>
 
-<section id="agenda">
+      </div>
 
-<div class="card">
 
-<div class="calendar-head">
+      <div class="calendar-card">
 
-<h2 id="month"></h2>
+        <div class="calendar-header">
 
-<div class="cal">
-<button id="prev">‹</button>
-<button id="next">›</button>
-</div>
+          <button onclick="changeMonth(-1)">
+            ‹
+          </button>
 
-</div>
+          <strong id="calendarTitle"></strong>
 
-<div class="week">
-<span>Dom</span>
-<span>Seg</span>
-<span>Ter</span>
-<span>Qua</span>
-<span>Qui</span>
-<span>Sex</span>
-<span>Sáb</span>
-</div>
+          <button onclick="changeMonth(1)">
+            ›
+          </button>
 
-<div id="cal" class="days"></div>
+        </div>
 
-</div>
 
+        <div class="weekdays">
 
-<div class="card">
+          <div class="weekday">DOM</div>
+          <div class="weekday">SEG</div>
+          <div class="weekday">TER</div>
+          <div class="weekday">QUA</div>
+          <div class="weekday">QUI</div>
+          <div class="weekday">SEX</div>
+          <div class="weekday">SÁB</div>
 
-<div class="row">
+        </div>
 
-<h2>
-Compromissos
-</h2>
 
-<button class="primary" data-new="event">
-+ Novo
-</button>
+        <div class="calendar-grid" id="calendarGrid"></div>
 
-</div>
+      </div>
 
-<div id="events" class="list"></div>
 
-</div>
+      <div class="section-title">
 
-</section>
+        <h3 id="selectedDateTitle">
+          Compromissos
+        </h3>
 
+      </div>
 
 
-<section id="tasks">
+      <div class="card" id="eventList"></div>
 
-<div class="card">
+    </section>
 
-<div class="row">
 
-<h2>
-Tarefas
-</h2>
+    <!-- TAREFAS -->
+    <section id="page-tasks" class="page">
 
-<button class="primary" data-new="task">
-+ Nova
-</button>
+      <div class="section-title">
 
-</div>
+        <h3>Tarefas</h3>
 
-<div id="tasksList" class="list"></div>
+        <button onclick="openModal('task')">
+          + Nova
+        </button>
 
-</div>
+      </div>
 
-</section>
+      <div class="card" id="taskList"></div>
 
+    </section>
 
 
-<section id="notes">
+    <!-- NOTAS -->
+    <section id="page-notes" class="page">
 
-<div class="card">
+      <div class="section-title">
 
-<div class="row">
+        <h3>Anotações</h3>
 
-<h2>
-Anotações
-</h2>
+        <button onclick="openModal('note')">
+          + Nova
+        </button>
 
-<button class="primary" data-new="note">
-+ Nova
-</button>
+      </div>
 
-</div>
 
-<input
-id="search"
-placeholder="Pesquisar anotações..."
->
+      <div class="search-box">
 
-<div id="notesList" class="notes"></div>
+        <input
+          type="text"
+          id="noteSearch"
+          placeholder="Pesquisar anotações..."
+          oninput="renderNotes()"
+        >
 
-</div>
+      </div>
 
-</section>
 
-</div>
+      <div id="noteList"></div>
 
+    </section>
 
+  </main>
 
-<button class="fab" id="fab">
-+
-</button>
 
+  <!-- BOTÃO + -->
+  <button class="fab" onclick="openModal()">
+    +
+  </button>
 
 
-<nav class="nav">
+  <!-- MENU INFERIOR -->
+  <nav class="bottom-nav">
 
-<button class="active" data-go="home">
-⌂
-<br>
-Início
-</button>
+    <button
+      class="nav-btn active"
+      data-page="home"
+      onclick="showPage('home')"
+    >
+      <span class="icon">⌂</span>
+      <span>Início</span>
+    </button>
 
-<button data-go="agenda">
-▣
-<br>
-Agenda
-</button>
 
-<button data-go="tasks">
-✓
-<br>
-Tarefas
-</button>
+    <button
+      class="nav-btn"
+      data-page="agenda"
+      onclick="showPage('agenda')"
+    >
+      <span class="icon">▣</span>
+      <span>Agenda</span>
+    </button>
 
-<button data-go="notes">
-✎
-<br>
-Notas
-</button>
 
-</nav>
+    <button
+      class="nav-btn"
+      data-page="tasks"
+      onclick="showPage('tasks')"
+    >
+      <span class="icon">✓</span>
+      <span>Tarefas</span>
+    </button>
 
 
+    <button
+      class="nav-btn"
+      data-page="notes"
+      onclick="showPage('notes')"
+    >
+      <span class="icon">☷</span>
+      <span>Notas</span>
+    </button>
 
-<div class="modal" id="modal">
+  </nav>
 
-<div class="box">
 
-<div class="row">
+  <!-- MODAL -->
+  <div class="modal" id="modal">
 
-<h2 id="mtitle">
-Novo
-</h2>
+    <div class="modal-box">
 
-<button class="icon" id="close">
-✕
-</button>
+      <div class="modal-header">
 
-</div>
+        <h3 id="modalTitle">
+          Novo item
+        </h3>
 
-<form id="form"></form>
+        <button class="close-btn" onclick="closeModal()">
+          ×
+        </button>
 
-</div>
+      </div>
 
-</div>
 
+      <form id="itemForm">
 
+        <input
+          type="hidden"
+          id="editId"
+        >
 
-<!-- FIREBASE -->
 
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+        <div class="form-group">
 
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+          <label>Tipo</label>
 
-<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+          <select
+            id="itemType"
+            onchange="updateFormFields()"
+          >
 
+            <option value="event">
+              Compromisso
+            </option>
 
-<script>
+            <option value="task">
+              Tarefa
+            </option>
 
-const firebaseConfig = {
+            <option value="note">
+              Anotação
+            </option>
 
-apiKey: "AIzaSyAsf0YLK7c5FOBuw8q05iETDIGTjANkHKE",
+          </select>
 
-authDomain: "minha-agenda-253ad.firebaseapp.com",
+        </div>
 
-projectId: "minha-agenda-253ad",
 
-storageBucket: "minha-agenda-253ad.firebasestorage.app",
+        <div class="form-group">
 
-messagingSenderId: "56708978577",
+          <label for="itemTitle">
+            Título
+          </label>
 
-appId: "1:56708978577:web:21180db43c6aa0b5122c30"
+          <input
+            id="itemTitle"
+            type="text"
+            placeholder="Digite um título"
+            required
+          >
 
-};
+        </div>
 
 
-firebase.initializeApp(firebaseConfig);
+        <div class="form-group" id="dateGroup">
 
+          <label for="itemDate">
+            Data
+          </label>
 
-const auth = firebase.auth();
+          <input
+            id="itemDate"
+            type="date"
+          >
 
-const db = firebase.firestore();
+        </div>
 
 
-const K = "minhaAgendaV1";
+        <div class="form-group" id="timeGroup">
 
+          <label for="itemTime">
+            Horário
+          </label>
 
-let D = {
-events: [],
-tasks: [],
-notes: []
-};
+          <input
+            id="itemTime"
+            type="time"
+          >
 
+        </div>
 
-let M = new Date();
 
-let TYPE = "event";
+        <div class="form-group">
 
-let unsubscribe = null;
+          <label for="itemDescription">
+            Descrição
+          </label>
 
-let ready = false;
+          <textarea
+            id="itemDescription"
+            placeholder="Digite os detalhes..."
+          ></textarea>
 
+        </div>
 
 
-const $ = s => document.querySelector(s);
+        <button
+          class="save-btn"
+          type="submit"
+        >
+          Salvar
+        </button>
 
-const $$ = s => document.querySelectorAll(s);
+      </form>
 
-const today = () => {
+    </div>
 
-const d = new Date();
+  </div>
 
-const y = d.getFullYear();
 
-const m = String(d.getMonth()+1).padStart(2,"0");
+  <!-- FIREBASE -->
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
 
-const day = String(d.getDate()).padStart(2,"0");
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
 
-return `${y}-${m}-${day}`;
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
 
-};
 
+  <script>
 
+    // ==========================================
+    // CONFIGURAÇÃO DO FIREBASE
+    // ==========================================
 
-const esc = s => String(s ?? "").replace(
-/[&<>"']/g,
-c => ({
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#39;"
-}[c])
-);
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsf0YLK7c5FOBuw8q05iETDIGTjANkHKE",
+      authDomain: "minha-agenda-253ad.firebaseapp.com",
+      projectId: "minha-agenda-253ad",
+      storageBucket: "minha-agenda-253ad.firebasestorage.app",
+      messagingSenderId: "56708978577",
+      appId: "1:56708978577:web:21180db43c6aa0b5122c30"
+    };
 
 
+    firebase.initializeApp(firebaseConfig);
 
-const fmt = d => {
 
-if(!d) return "";
+    const auth = firebase.auth();
 
-return new Date(d+"T12:00:00").toLocaleDateString(
-"pt-BR",
-{
-day:"2-digit",
-month:"2-digit",
-year:"numeric"
-}
-);
+    const db = firebase.firestore();
 
-};
+    const agendaRef = db.collection("agenda");
 
 
+    // ==========================================
+    // VARIÁVEIS
+    // ==========================================
 
-function render(){
+    let currentUser = null;
 
-const n = new Date();
+    let items = [];
 
+    let currentDate = new Date();
 
-$("#date").textContent =
-n.toLocaleDateString(
-"pt-BR",
-{
-weekday:"long",
-day:"numeric",
-month:"long"
-}
-);
+    let selectedDate = new Date();
 
 
-$("#ec").textContent = D.events.length;
+    // ==========================================
+    // DATA LOCAL
+    // ==========================================
 
-$("#tc").textContent =
-D.tasks.filter(x => !x.done).length;
+    function localDateString(date = new Date()) {
 
-$("#nc").textContent =
-D.notes.length;
+      const year = date.getFullYear();
 
+      const month = String(
+        date.getMonth() + 1
+      ).padStart(2, "0");
 
+      const day = String(
+        date.getDate()
+      ).padStart(2, "0");
 
-let ev = [...D.events]
+      return `${year}-${month}-${day}`;
+    }
 
-.filter(e => {
 
-if(!e.date) return false;
+    // ==========================================
+    // DATA FORMATADA
+    // ==========================================
 
-return new Date(
-e.date+"T"+(e.time||"23:59")
-) >= n;
+    function formatDate(dateString) {
 
-})
+      if (!dateString) return "";
 
-.sort(
-(a,b) =>
-(a.date+(a.time||""))
-.localeCompare(
-b.date+(b.time||"")
-)
-)
+      const parts = dateString.split("-");
 
-.slice(0,5);
+      if (parts.length !== 3) return dateString;
 
+      const date = new Date(
+        Number(parts[0]),
+        Number(parts[1]) - 1,
+        Number(parts[2])
+      );
 
+      return date.toLocaleDateString(
+        "pt-BR",
+        {
+          weekday: "long",
+          day: "2-digit",
+          month: "long"
+        }
+      );
+    }
 
-$("#up").innerHTML =
-ev.length
-?
-ev.map(e =>
 
-'<div class="item">'+
-'<b>'+esc(e.title)+'</b>'+
-'<br>'+
-'<small>'+
-fmt(e.date)+
-(e.time ? " • "+esc(e.time) : "")+
-(e.location ? " • "+esc(e.location) : "")+
-'</small>'+
-'</div>'
+    // ==========================================
+    // LOGIN AUTOMÁTICO
+    // ==========================================
 
-).join("")
+    auth.onAuthStateChanged(async user => {
 
-:
+      if (user) {
 
-'<div class="muted">Nenhum compromisso próximo.</div>';
+        currentUser = user;
 
+        iniciarSincronizacao();
 
+      } else {
 
-let tt = D.tasks.filter(
-x => x.date == today()
-);
+        try {
 
+          await auth.signInAnonymously();
 
-$("#today").innerHTML =
-tt.length
-?
-tt.map(task).join("")
-:
-'<div class="muted">Nenhuma tarefa para hoje.</div>';
+        } catch (error) {
 
+          console.error(error);
 
+          alert(
+            "Não foi possível conectar ao Firebase. Verifique se o login anônimo está ativado."
+          );
 
-$("#tasksList").innerHTML =
-D.tasks.length
-?
-D.tasks.map(task).join("")
-:
-'<div class="muted">Nenhuma tarefa cadastrada.</div>';
+          document
+            .getElementById("loading")
+            .classList.add("hide");
+        }
 
+      }
 
+    });
 
-$("#events").innerHTML =
-D.events.length
-?
 
-D.events
+    // ==========================================
+    // SINCRONIZAÇÃO FIRESTORE
+    // ==========================================
 
-.sort(
-(a,b)=>
-(a.date+(a.time||""))
-.localeCompare(
-b.date+(b.time||"")
-)
-)
+    function iniciarSincronizacao() {
 
-.map(e =>
+      agendaRef
+        .orderBy("createdAt", "desc")
+        .onSnapshot(
+          snapshot => {
 
-'<div class="item row">'+
+            items = [];
 
-'<div>'+
+            snapshot.forEach(doc => {
 
-'<b>'+esc(e.title)+'</b>'+
+              items.push({
+                firestoreId: doc.id,
+                ...doc.data()
+              });
 
-'<br>'+
+            });
 
-'<small>'+
-fmt(e.date)+
-(e.time ? " • "+esc(e.time) : "")+
-(e.location ? " • "+esc(e.location) : "")+
-'</small>'+
 
-(e.notes ?
-'<div class="muted">'+
-esc(e.notes)+
-'</div>'
-:
-''
-)+
+            renderAll();
 
-'</div>'+
 
-'<button class="danger" data-de="'+
-e.id+
-'">Excluir</button>'+
+            document
+              .getElementById("loading")
+              .classList.add("hide");
 
-'</div>'
+          },
 
-)
+          error => {
 
-.join("")
+            console.error(error);
 
-:
+            document
+              .getElementById("loading")
+              .classList.add("hide");
 
-'<div class="muted">Nenhum compromisso cadastrado.</div>';
+            alert(
+              "Erro ao sincronizar a agenda com o Firebase."
+            );
 
+          }
+        );
 
+    }
 
-let y = M.getFullYear();
 
-let m = M.getMonth();
+    // ==========================================
+    // NAVEGAÇÃO
+    // ==========================================
 
-let days =
-new Date(y,m+1,0).getDate();
+    function showPage(page) {
 
-let first =
-new Date(y,m,1).getDay();
+      document
+        .querySelectorAll(".page")
+        .forEach(element => {
 
+          element.classList.remove("active");
 
-$("#month").textContent =
-new Date(y,m,1).toLocaleDateString(
-"pt-BR",
-{
-month:"long",
-year:"numeric"
-}
-);
+        });
 
 
+      const target =
+        document.getElementById(
+          "page-" + page
+        );
 
-let c = "";
 
-for(let i=0;i<first;i++){
-c += "<span></span>";
-}
+      if (target) {
 
+        target.classList.add("active");
 
-for(let d=1;d<=days;d++){
+      }
 
-const dateObj = new Date(y,m,d);
 
-const ds =
-`${dateObj.getFullYear()}-`+
-`${String(dateObj.getMonth()+1).padStart(2,"0")}-`+
-`${String(dateObj.getDate()).padStart(2,"0")}`;
+      document
+        .querySelectorAll(".nav-btn")
+        .forEach(button => {
 
+          button.classList.remove("active");
 
-c +=
+          if (
+            button.dataset.page === page
+          ) {
 
-'<button class="day '+
-(ds == today() ? "today " : "")+
-(D.events.some(e => e.date == ds) ? "has" : "")+
-'" data-day="'+ds+'">'+
-d+
-'</button>';
+            button.classList.add("active");
 
-}
+          }
 
+        });
 
-$("#cal").innerHTML = c;
 
+      if (page === "agenda") {
 
+        renderCalendar();
 
-let q =
-($("#search").value || "").toLowerCase();
+        renderEvents();
 
+      }
 
-let ns =
-D.notes.filter(
-x =>
-((x.title||"")+" "+(x.text||""))
-.toLowerCase()
-.includes(q)
-);
+      if (page === "tasks") {
 
+        renderTasks();
 
-$("#notesList").innerHTML =
-ns.length
-?
+      }
 
-ns.map(x =>
+      if (page === "notes") {
 
-'<div class="note">'+
+        renderNotes();
 
-'<div class="row">'+
+      }
 
-'<b>'+esc(x.title)+'</b>'+
+    }
 
-'<button class="danger" data-dn="'+
-x.id+
-'">Excluir</button>'+
 
-'</div>'+
+    // ==========================================
+    // TEMA
+    // ==========================================
 
-'<p>'+
-esc(x.text)+
-'</p>'+
+    function toggleTheme() {
 
-'</div>'
+      document.body.classList.toggle("dark");
 
-).join("")
+      const dark =
+        document.body.classList.contains("dark");
 
-:
 
-'<div class="muted">Nenhuma anotação encontrada.</div>';
+      localStorage.setItem(
+        "darkMode",
+        dark ? "1" : "0"
+      );
 
-}
 
+      document.getElementById(
+        "themeBtn"
+      ).textContent = dark ? "☀️" : "🌙";
 
+    }
 
-function task(t){
 
-return (
+    function loadTheme() {
 
-'<div class="item row">'+
+      const dark =
+        localStorage.getItem("darkMode") === "1";
 
-'<div>'+
 
-'<label style="display:flex;align-items:center;gap:8px">'+
+      if (dark) {
 
-'<input type="checkbox" data-toggle="'+
-t.id+
-'" '+
-(t.done ? "checked" : "")+
-' style="width:auto;margin:0">'+
+        document.body.classList.add("dark");
 
-'<span class="'+
-(t.done ? "done" : "")+
-'">'+
-esc(t.title)+
-'</span>'+
+        document.getElementById(
+          "themeBtn"
+        ).textContent = "☀️";
 
-'</label>'+
+      }
 
-'<br>'+
+    }
 
-'<small>'+
-esc(t.date || "Sem data")+
-" • "+
-esc(t.priority || "Normal")+
-'</small>'+
 
-'</div>'+
+    // ==========================================
+    // MODAL
+    // ==========================================
 
-'<button class="danger" data-dt="'+
-t.id+
-'">Excluir</button>'+
+    function openModal(type = "event") {
 
-'</div>'
+      const modal =
+        document.getElementById("modal");
 
-);
 
-}
+      document
+        .getElementById("itemForm")
+        .reset();
 
 
+      document
+        .getElementById("editId")
+        .value = "";
 
-function go(id){
 
-$$("section").forEach(
-x => x.classList.remove("active")
-);
+      document
+        .getElementById("itemType")
+        .value = type;
 
-$("#"+id).classList.add("active");
 
+      document
+        .getElementById("itemDate")
+        .value =
+        localDateString(selectedDate);
 
-$$("[data-go]").forEach(
-x =>
-x.classList.toggle(
-"active",
-x.dataset.go == id
-)
-);
 
-}
+      document
+        .getElementById("modalTitle")
+        .textContent =
+        type === "event"
+          ? "Novo compromisso"
+          : type === "task"
+            ? "Nova tarefa"
+            : "Nova anotação";
 
 
+      updateFormFields();
 
-$$("[data-go]").forEach(
-x =>
-x.onclick =
-() => go(x.dataset.go)
-);
 
+      modal.classList.add("show");
 
+    }
 
-$("#logout").onclick =
-() => auth.signOut();
 
+    function closeModal() {
 
+      document
+        .getElementById("modal")
+        .classList.remove("show");
 
-$("#theme").onclick = () => {
+    }
 
-document.body.classList.toggle("dark");
 
-localStorage.setItem(
-"dark",
-document.body.classList.contains("dark")
-);
+    function updateFormFields() {
 
-};
+      const type =
+        document.getElementById(
+          "itemType"
+        ).value;
 
 
+      const dateGroup =
+        document.getElementById(
+          "dateGroup"
+        );
 
-if(
-localStorage.getItem("dark") == "true"
-){
-document.body.classList.add("dark");
-}
 
+      const timeGroup =
+        document.getElementById(
+          "timeGroup"
+        );
 
 
-function open(type,date=""){
+      if (type === "event") {
 
-TYPE = type;
+        dateGroup.style.display = "block";
 
-$("#modal").classList.add("show");
+        timeGroup.style.display = "block";
 
+      }
 
-$("#mtitle").textContent =
-type == "event"
-?
-"Novo compromisso"
-:
-type == "task"
-?
-"Nova tarefa"
-:
-"Nova anotação";
+      else {
 
+        dateGroup.style.display = "none";
 
-const f = $("#form");
+        timeGroup.style.display = "none";
 
+      }
 
+    }
 
-if(type == "event"){
 
-f.innerHTML =
+    // ==========================================
+    // SALVAR
+    // ==========================================
 
-'<label>Título'+
-'<input name="title" required>'+
-'</label>'+
+    document
+      .getElementById("itemForm")
+      .addEventListener("submit", async event => {
 
-'<label>Data'+
-'<input name="date" type="date" value="'+
-(date || today())+
-'" required>'+
-'</label>'+
+        event.preventDefault();
 
-'<label>Horário'+
-'<input name="time" type="time">'+
-'</label>'+
 
-'<label>Local'+
-'<input name="location">'+
-'</label>'+
+        if (!currentUser) {
 
-'<label>Observações'+
-'<textarea name="notes"></textarea>'+
-'</label>'+
+          alert("Aguarde a conexão com o Firebase.");
 
-'<div class="actions">'+
+          return;
 
-'<button type="button" class="icon" id="cancel">'+
-'Cancelar'+
-'</button>'+
+        }
 
-'<button class="primary">'+
-'Salvar'+
-'</button>'+
 
-'</div>';
+        const type =
+          document.getElementById(
+            "itemType"
+          ).value;
 
-}
 
+        const title =
+          document.getElementById(
+            "itemTitle"
+          ).value.trim();
 
 
-if(type == "task"){
+        const description =
+          document.getElementById(
+            "itemDescription"
+          ).value.trim();
 
-f.innerHTML =
 
-'<label>Tarefa'+
-'<input name="title" required>'+
-'</label>'+
+        const date =
+          document.getElementById(
+            "itemDate"
+          ).value;
 
-'<label>Data'+
-'<input name="date" type="date" value="'+
-(date || today())+
-'">'+
-'</label>'+
 
-'<label>Prioridade'+
+        const time =
+          document.getElementById(
+            "itemTime"
+          ).value;
 
-'<select name="priority">'+
 
-'<option>Normal</option>'+
-'<option>Alta</option>'+
-'<option>Baixa</option>'+
+        const editId =
+          document.getElementById(
+            "editId"
+          ).value;
 
-'</select>'+
 
-'</label>'+
+        if (!title) {
 
-'<div class="actions">'+
+          alert("Digite um título.");
 
-'<button type="button" class="icon" id="cancel">'+
-'Cancelar'+
-'</button>'+
+          return;
 
-'<button class="primary">'+
-'Salvar'+
-'</button>'+
+        }
 
-'</div>';
 
-}
+        const data = {
 
+          type: type,
 
+          title: title,
 
-if(type == "note"){
+          description: description,
 
-f.innerHTML =
+          date:
+            type === "event"
+              ? date
+              : "",
 
-'<label>Título'+
-'<input name="title" required>'+
-'</label>'+
+          time:
+            type === "event"
+              ? time
+              : "",
 
-'<label>Texto'+
-'<textarea name="text" required></textarea>'+
-'</label>'+
+          completed: false,
 
-'<div class="actions">'+
+          userId: currentUser.uid,
 
-'<button type="button" class="icon" id="cancel">'+
-'Cancelar'+
-'</button>'+
+          createdAt:
+            firebase.firestore.FieldValue.serverTimestamp()
 
-'<button class="primary">'+
-'Salvar'+
-'</button>'+
+        };
 
-'</div>';
 
-}
+        try {
 
+          if (editId) {
 
-$("#cancel").onclick = close;
+            await agendaRef
+              .doc(editId)
+              .update(data);
 
-}
+          }
 
+          else {
 
+            await agendaRef
+              .add(data);
 
-function close(){
+          }
 
-$("#modal").classList.remove("show");
 
-}
+          closeModal();
 
+        }
 
-$("#close").onclick = close;
+        catch (error) {
 
+          console.error(error);
 
+          alert(
+            "Erro ao salvar. Tente novamente."
+          );
 
-async function addDoc(type,o){
+        }
 
-if(!auth.currentUser){
-throw new Error("Usuário não autenticado");
-}
+      });
 
 
-const ref =
-db.collection("agenda").doc();
+    // ==========================================
+    // EXCLUIR
+    // ==========================================
 
+    async function deleteItem(id) {
 
-o.id = ref.id;
+      if (!confirm("Excluir este item?")) {
 
-o.type = type;
+        return;
 
-o.userId = auth.currentUser.uid;
+      }
 
-o.createdAt =
-firebase.firestore.FieldValue.serverTimestamp();
 
+      try {
 
-await ref.set(o);
+        await agendaRef
+          .doc(id)
+          .delete();
 
-}
+      }
 
+      catch (error) {
 
+        console.error(error);
 
-async function delDoc(id){
+        alert(
+          "Não foi possível excluir."
+        );
 
-await db
-.collection("agenda")
-.doc(id)
-.delete();
+      }
 
-}
+    }
 
 
+    // ==========================================
+    // CONCLUIR TAREFA
+    // ==========================================
 
-async function updateDoc(id,data){
+    async function toggleTask(id, completed) {
 
-await db
-.collection("agenda")
-.doc(id)
-.update(data);
+      try {
 
-}
+        await agendaRef
+          .doc(id)
+          .update({
+            completed: !completed
+          });
 
+      }
 
+      catch (error) {
 
-$("#form").onsubmit =
-async e => {
+        console.error(error);
 
-e.preventDefault();
+        alert(
+          "Não foi possível atualizar a tarefa."
+        );
 
+      }
 
-if(!ready) return;
+    }
 
 
-let o =
-Object.fromEntries(
-new FormData(e.target)
-);
+    // ==========================================
+    // CALENDÁRIO
+    // ==========================================
 
+    function changeMonth(direction) {
 
-if(TYPE == "task"){
-o.done = false;
-}
+      currentDate.setMonth(
+        currentDate.getMonth() + direction
+      );
 
+      renderCalendar();
 
-try{
+    }
 
-await addDoc(TYPE,o);
 
-close();
+    function renderCalendar() {
 
-}
+      const year =
+        currentDate.getFullYear();
 
-catch(err){
+      const month =
+        currentDate.getMonth();
 
-console.error(err);
 
-alert(
-"Não foi possível salvar. Verifique sua conexão e as regras do Firestore."
-);
+      const monthName =
+        currentDate.toLocaleDateString(
+          "pt-BR",
+          {
+            month: "long",
+            year: "numeric"
+          }
+        );
 
-}
 
-};
+      document.getElementById(
+        "calendarTitle"
+      ).textContent = monthName;
 
 
+      const grid =
+        document.getElementById(
+          "calendarGrid"
+        );
 
-document.addEventListener(
-"click",
-async e => {
 
+      grid.innerHTML = "";
 
-let n =
-e.target.closest("[data-new]");
 
-if(n){
-open(n.dataset.new);
-}
+      const firstDay =
+        new Date(
+          year,
+          month,
+          1
+        ).getDay();
 
 
+      const daysInMonth =
+        new Date(
+          year,
+          month + 1,
+          0
+        ).getDate();
 
-let d =
-e.target.closest("[data-dt]");
 
-if(d){
+      for (
+        let i = 0;
+        i < firstDay;
+        i++
+      ) {
 
-try{
+        const empty =
+          document.createElement("div");
 
-await delDoc(d.dataset.dt);
+        grid.appendChild(empty);
 
-}
+      }
 
-catch(err){
 
-alert("Erro ao excluir");
+      const today =
+        localDateString();
 
-}
 
-}
+      for (
+        let day = 1;
+        day <= daysInMonth;
+        day++
+      ) {
 
+        const dateString =
+          `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
 
-let de =
-e.target.closest("[data-de]");
+        const button =
+          document.createElement("button");
 
-if(de){
 
-try{
+        button.className = "day";
 
-await delDoc(de.dataset.de);
+        button.textContent = day;
 
-}
 
-catch(err){
+        if (dateString === today) {
 
-alert("Erro ao excluir");
+          button.classList.add("today");
 
-}
+        }
 
-}
 
+        if (
+          dateString ===
+          localDateString(selectedDate)
+        ) {
 
+          button.classList.add("selected");
 
-let dn =
-e.target.closest("[data-dn]");
+        }
 
-if(dn){
 
-try{
+        if (
+          items.some(
+            item =>
+              item.type === "event" &&
+              item.date === dateString
+          )
+        ) {
 
-await delDoc(dn.dataset.dn);
+          button.classList.add("has-event");
 
-}
+        }
 
-catch(err){
 
-alert("Erro ao excluir");
+        button.onclick = () => {
 
-}
+          selectedDate =
+            new Date(
+              year,
+              month,
+              day
+            );
 
-}
+          renderCalendar();
 
+          renderEvents();
 
+        };
 
-let tg =
-e.target.closest("[data-toggle]");
 
-if(tg){
+        grid.appendChild(button);
 
-try{
+      }
 
-await updateDoc(
-tg.dataset.toggle,
-{
-done:tg.checked
-}
-);
+    }
 
-}
 
-catch(err){
+    // ==========================================
+    // COMPROMISSOS
+    // ==========================================
 
-alert("Erro ao atualizar");
+    function renderEvents() {
 
-}
+      const date =
+        localDateString(selectedDate);
 
-}
 
+      document.getElementById(
+        "selectedDateTitle"
+      ).textContent =
+        "Compromissos de " +
+        selectedDate.toLocaleDateString(
+          "pt-BR"
+        );
 
 
-let day =
-e.target.closest("[data-day]");
+      const list =
+        document.getElementById(
+          "eventList"
+        );
 
-if(day){
 
-open(
-"event",
-day.dataset.day
-);
+      const events =
+        items
+          .filter(
+            item =>
+              item.type === "event" &&
+              item.date === date
+          )
+          .sort(
+            (a, b) =>
+              (a.time || "")
+                .localeCompare(
+                  b.time || ""
+                )
+          );
 
-}
 
-}
+      if (!events.length) {
 
-);
+        list.innerHTML = `
+          <div class="empty">
+            Nenhum compromisso para este dia.
+          </div>
+        `;
 
+        return;
 
+      }
 
-$("#prev").onclick =
-() => {
 
-M.setMonth(
-M.getMonth()-1
-);
+      list.innerHTML =
+        events
+          .map(event => `
 
-render();
+            <div class="item">
 
-};
+              <div class="item-dot"></div>
 
+              <div class="item-content">
 
+                <div class="item-title">
+                  ${escapeHtml(event.title)}
+                </div>
 
-$("#next").onclick =
-() => {
+                <div class="item-info">
 
-M.setMonth(
-M.getMonth()+1
-);
+                  ${event.time
+                    ? "🕐 " +
+                      escapeHtml(event.time)
+                    : ""
+                  }
 
-render();
+                  ${
+                    event.description
+                      ? "<br>" +
+                        escapeHtml(
+                          event.description
+                        )
+                      : ""
+                  }
 
-};
+                </div>
 
+              </div>
 
+              <button
+                class="delete-btn"
+                onclick="deleteItem('${event.firestoreId}')"
+              >
+                ×
+              </button>
 
-$("#search").oninput = render;
+            </div>
 
+          `)
+          .join("");
 
-$("#fab").onclick =
-() => open("event");
+    }
 
 
+    // ==========================================
+    // TAREFAS
+    // ==========================================
 
-/* LOGIN */
+    function renderTasks() {
 
-const login =
-document.createElement("div");
+      const list =
+        document.getElementById(
+          "taskList"
+        );
 
 
-login.id =
-"loginScreen";
+      const tasks =
+        items.filter(
+          item =>
+            item.type === "task"
+        );
 
 
-login.innerHTML =
+      if (!tasks.length) {
 
-'<div class="login-box">'+
+        list.innerHTML = `
+          <div class="empty">
+            Nenhuma tarefa cadastrada.
+          </div>
+        `;
 
-'<div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em">'+
-'MINHA AGENDA'+
-'</div>'+
+        return;
 
-'<h1>Entrar</h1>'+
+      }
 
-'<p class="muted">'+
-'Entre com um dos usuários cadastrados para acessar a agenda compartilhada.'+
-'</p>'+
 
-'<input id="email" type="email" placeholder="E-mail" autocomplete="username">'+
+      list.innerHTML =
+        tasks
+          .map(task => `
 
-'<input id="password" type="password" placeholder="Senha" autocomplete="current-password">'+
+            <div class="task-row">
 
-'<button id="loginBtn" class="primary" style="width:100%;padding:14px">'+
-'Entrar'+
-'</button>'+
+              <button
+                class="task-check ${
+                  task.completed
+                    ? "done"
+                    : ""
+                }"
+                onclick="toggleTask(
+                  '${task.firestoreId}',
+                  ${task.completed ? "true" : "false"}
+                )"
+              >
+                ${
+                  task.completed
+                    ? "✓"
+                    : ""
+                }
+              </button>
 
-'<p id="loginMsg" class="muted" style="margin-top:12px"></p>'+
 
-'</div>';
+              <div
+                class="task-text ${
+                  task.completed
+                    ? "done"
+                    : ""
+                }"
+              >
+                ${escapeHtml(task.title)}
+              </div>
 
 
-document.body.appendChild(login);
+              <button
+                class="delete-btn"
+                onclick="deleteItem('${task.firestoreId}')"
+              >
+                ×
+              </button>
 
+            </div>
 
+          `)
+          .join("");
 
-$("#loginBtn").onclick =
-async () => {
+    }
 
-const email =
-$("#email").value.trim();
 
-const password =
-$("#password").value;
+    // ==========================================
+    // NOTAS
+    // ==========================================
 
+    function renderNotes() {
 
-$("#loginMsg").textContent =
-"Entrando...";
+      const list =
+        document.getElementById(
+          "noteList"
+        );
 
 
-$("#loginMsg").className =
-"muted";
+      const search =
+        document
+          .getElementById("noteSearch")
+          .value
+          .toLowerCase()
+          .trim();
 
 
-try{
+      const notes =
+        items.filter(note => {
 
-await auth.signInWithEmailAndPassword(
-email,
-password
-);
+          if (note.type !== "note") {
 
-}
+            return false;
 
-catch(err){
+          }
 
-console.error(err);
 
-$("#loginMsg").textContent =
-"E-mail ou senha incorretos.";
+          if (!search) {
 
-$("#loginMsg").className =
-"error";
+            return true;
 
-}
+          }
 
-};
 
+          return (
+            (note.title || "")
+              .toLowerCase()
+              .includes(search)
+            ||
+            (note.description || "")
+              .toLowerCase()
+              .includes(search)
+          );
 
+        });
 
-async function migrateLocal(){
 
-let old;
+      if (!notes.length) {
 
+        list.innerHTML = `
+          <div class="empty">
+            Nenhuma anotação encontrada.
+          </div>
+        `;
 
-try{
+        return;
 
-old =
-JSON.parse(
-localStorage.getItem(K) || "null"
-);
+      }
 
-}
 
-catch(e){
+      list.innerHTML =
+        notes
+          .map(note => `
 
-old = null;
+            <div class="note">
 
-}
+              <div class="note-title">
+                ${escapeHtml(note.title)}
+              </div>
 
 
-if(
-!old ||
-(
-!old.events?.length &&
-!old.tasks?.length &&
-!old.notes?.length
-)
-){
+              <div class="note-text">
+                ${escapeHtml(
+                  note.description || ""
+                )}
+              </div>
 
-return;
 
-}
+              <div class="note-footer">
 
+                <button
+                  class="delete-btn"
+                  onclick="deleteItem('${note.firestoreId}')"
+                >
+                  Excluir
+                </button>
 
-const snap =
-await db
-.collection("agenda")
-.limit(1)
-.get();
+              </div>
 
+            </div>
 
-if(!snap.empty){
-return;
-}
+          `)
+          .join("");
 
+    }
 
-const batch =
-db.batch();
 
+    // ==========================================
+    // PÁGINA INICIAL
+    // ==========================================
 
-for(
-const type of
-["events","tasks","notes"]
-){
+    function renderHome() {
 
-for(
-const o of
-(old[type] || [])
-){
+      const now =
+        new Date();
 
-const ref =
-db.collection("agenda").doc();
 
+      document.getElementById(
+        "heroDate"
+      ).textContent =
+        now.toLocaleDateString(
+          "pt-BR",
+          {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+          }
+        );
 
-batch.set(
-ref,
-{
-...o,
-id:ref.id,
-type:type.slice(0,-1),
-userId:auth.currentUser.uid,
-createdAt:
-firebase.firestore.FieldValue.serverTimestamp()
-}
-);
 
-}
+      const events =
+        items.filter(
+          item =>
+            item.type === "event"
+        );
 
-}
 
+      const openTasks =
+        items.filter(
+          item =>
+            item.type === "task" &&
+            !item.completed
+        );
 
-await batch.commit();
 
+      const notes =
+        items.filter(
+          item =>
+            item.type === "note"
+        );
 
-localStorage.removeItem(K);
 
-}
+      document.getElementById(
+        "statEvents"
+      ).textContent =
+        events.length;
 
 
+      document.getElementById(
+        "statTasks"
+      ).textContent =
+        openTasks.length;
 
-function listen(){
 
-if(unsubscribe){
-unsubscribe();
-}
+      document.getElementById(
+        "statNotes"
+      ).textContent =
+        notes.length;
 
 
-unsubscribe =
-db
-.collection("agenda")
-.onSnapshot(
+      const homeEvents =
+        document.getElementById(
+          "homeEvents"
+        );
 
-snap => {
 
-D = {
-events:[],
-tasks:[],
-notes:[]
-};
+      const today =
+        localDateString();
 
 
-snap.forEach(
-doc => {
+      const upcoming =
+        events
+          .filter(
+            event =>
+              event.date >= today
+          )
+          .sort(
+            (a, b) =>
+              (
+                a.date +
+                (a.time || "")
+              ).localeCompare(
+                b.date +
+                (b.time || "")
+              )
+          )
+          .slice(0, 5);
 
-const o = {
-id:doc.id,
-...doc.data()
-};
 
+      if (!upcoming.length) {
 
-if(o.type === "event"){
-D.events.push(o);
-}
+        homeEvents.innerHTML = `
+          <div class="empty">
+            Nenhum compromisso próximo.
+          </div>
+        `;
 
+      }
 
-if(o.type === "task"){
-D.tasks.push(o);
-}
+      else {
 
+        homeEvents.innerHTML =
+          upcoming
+            .map(event => `
 
-if(o.type === "note"){
-D.notes.push(o);
-}
+              <div class="item">
 
-});
+                <div class="item-dot"></div>
 
+                <div class="item-content">
 
-ready = true;
+                  <div class="item-title">
+                    ${escapeHtml(event.title)}
+                  </div>
 
-render();
+                  <div class="item-info">
 
-},
+                    ${formatDate(event.date)}
 
-err => {
+                    ${
+                      event.time
+                        ? " • " +
+                          escapeHtml(
+                            event.time
+                          )
+                        : ""
+                    }
 
-console.error(err);
+                  </div>
 
-ready = false;
+                </div>
 
-alert(
-"Não foi possível acessar a agenda. Verifique as regras do Firestore."
-);
+              </div>
 
-}
+            `)
+            .join("");
 
-);
+      }
 
-}
 
+      const homeTasks =
+        document.getElementById(
+          "homeTasks"
+        );
 
 
-auth.onAuthStateChanged(
-async user => {
+      const todayTasks =
+        openTasks.slice(0, 5);
 
-if(!user){
 
-ready = false;
+      if (!todayTasks.length) {
 
-login.style.display =
-"block";
+        homeTasks.innerHTML = `
+          <div class="empty">
+            Nenhuma tarefa pendente.
+          </div>
+        `;
 
-return;
+      }
 
-}
+      else {
 
+        homeTasks.innerHTML =
+          todayTasks
+            .map(task => `
 
-login.style.display =
-"none";
+              <div class="task-row">
 
+                <button
+                  class="task-check"
+                  onclick="toggleTask(
+                    '${task.firestoreId}',
+                    false
+                  )"
+                >
+                </button>
 
-try{
+                <div class="task-text">
+                  ${escapeHtml(task.title)}
+                </div>
 
-await migrateLocal();
+              </div>
 
-}
+            `)
+            .join("");
 
-catch(e){
+      }
 
-console.warn(e);
+    }
 
-}
 
+    // ==========================================
+    // RENDER GERAL
+    // ==========================================
 
-listen();
+    function renderAll() {
 
-}
+      renderHome();
 
-);
+      renderCalendar();
 
+      renderEvents();
 
+      renderTasks();
 
-render();
+      renderNotes();
 
-</script>
+    }
+
+
+    // ==========================================
+    // PROTEÇÃO CONTRA HTML
+    // ==========================================
+
+    function escapeHtml(value) {
+
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    // ==========================================
+    // FECHAR MODAL CLICANDO FORA
+    // ==========================================
+
+    document
+      .getElementById("modal")
+      .addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target.id === "modal"
+          ) {
+
+            closeModal();
+
+          }
+
+        }
+      );
+
+
+    // ==========================================
+    // INICIALIZAÇÃO
+    // ==========================================
+
+    loadTheme();
+
+    renderHome();
+
+  </script>
 
 </body>
 </html>
