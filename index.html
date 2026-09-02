@@ -17,7 +17,9 @@
   --soft:#eff6ff;
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -40,8 +42,13 @@ header,.row{
   gap:10px;
 }
 
-h1{font-size:24px}
-h2{font-size:20px}
+h1{
+  font-size:24px;
+}
+
+h2{
+  font-size:20px;
+}
 
 .hero,.card,.stat,.note{
   background:var(--card);
@@ -51,15 +58,13 @@ h2{font-size:20px}
   margin-bottom:14px;
 }
 
-.hero{padding:22px}
+.hero{
+  padding:22px;
+}
 
 .hero .date{
   color:var(--p);
   font-weight:700;
-}
-
-.muted,small{
-  color:var(--muted);
 }
 
 .stats{
@@ -187,6 +192,11 @@ section.active{
   font-weight:700;
 }
 
+
+/* =========================
+   BOTÃO +
+========================= */
+
 .fab{
   position:fixed;
   right:20px;
@@ -197,8 +207,65 @@ section.active{
   background:var(--p);
   color:#fff;
   font-size:28px;
-  z-index:4;
+  z-index:7;
+  transition:.2s ease;
 }
+
+.fab.open{
+  transform:rotate(45deg);
+}
+
+
+/* =========================
+   MENU DO +
+========================= */
+
+.fab-menu{
+  position:fixed;
+  right:20px;
+  bottom:158px;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+  z-index:6;
+
+  opacity:0;
+  transform:translateY(10px) scale(.95);
+  pointer-events:none;
+
+  transition:.2s ease;
+}
+
+.fab-menu.show{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+
+.fab-option{
+  display:flex;
+  align-items:center;
+  gap:9px;
+
+  background:var(--card);
+  color:var(--text);
+
+  border:1px solid var(--line);
+  border-radius:15px;
+
+  padding:10px 14px;
+
+  box-shadow:0 8px 25px #0002;
+
+  font-weight:700;
+  font-size:14px;
+}
+
+.fab-option span{
+  font-size:20px;
+}
+
 
 .calendar-head{
   display:flex;
@@ -320,6 +387,7 @@ body.dark{
 }
 
 @media(min-width:650px){
+
   .modal{
     align-items:center;
   }
@@ -332,9 +400,11 @@ body.dark{
   .notes{
     grid-template-columns:repeat(3,1fr);
   }
+
 }
 </style>
 </head>
+
 
 <body>
 
@@ -343,29 +413,46 @@ body.dark{
 <header>
 
   <div>
-    <div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em;margin-bottom:6px">
+
+    <div style="
+      font-size:13px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.08em;
+      margin-bottom:6px
+    ">
       ORGANIZAÇÃO
     </div>
 
     <h1 style="margin:0">
       Minha Agenda
     </h1>
+
   </div>
 
-  <button class="icon" id="theme">
+  <button
+    class="icon"
+    id="theme">
     🌙
   </button>
 
 </header>
 
 
-<!-- INÍCIO -->
+<!-- =========================
+     INÍCIO
+========================= -->
 
-<section id="home" class="active">
+<section
+  id="home"
+  class="active">
 
   <div class="hero">
 
-    <div class="date" id="date"></div>
+    <div
+      class="date"
+      id="date">
+    </div>
 
     <h2>
       Seu dia, do seu jeito.
@@ -381,18 +468,41 @@ body.dark{
   <div class="stats">
 
     <div class="stat">
-      <strong id="ec">0</strong>
-      <span>Compromissos</span>
+
+      <strong id="ec">
+        0
+      </strong>
+
+      <span>
+        Compromissos
+      </span>
+
     </div>
 
-    <div class="stat">
-      <strong id="tc">0</strong>
-      <span>Tarefas abertas</span>
-    </div>
 
     <div class="stat">
-      <strong id="nc">0</strong>
-      <span>Anotações</span>
+
+      <strong id="tc">
+        0
+      </strong>
+
+      <span>
+        Tarefas abertas
+      </span>
+
+    </div>
+
+
+    <div class="stat">
+
+      <strong id="nc">
+        0
+      </strong>
+
+      <span>
+        Anotações
+      </span>
+
     </div>
 
   </div>
@@ -404,7 +514,10 @@ body.dark{
       Próximos compromissos
     </h2>
 
-    <div id="up" class="list"></div>
+    <div
+      id="up"
+      class="list">
+    </div>
 
   </div>
 
@@ -415,14 +528,19 @@ body.dark{
       Tarefas de hoje
     </h2>
 
-    <div id="today" class="list"></div>
+    <div
+      id="today"
+      class="list">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- AGENDA -->
+<!-- =========================
+     AGENDA
+========================= -->
 
 <section id="agenda">
 
@@ -460,7 +578,10 @@ body.dark{
     </div>
 
 
-    <div id="cal" class="days"></div>
+    <div
+      id="cal"
+      class="days">
+    </div>
 
   </div>
 
@@ -481,14 +602,19 @@ body.dark{
 
     </div>
 
-    <div id="events" class="list"></div>
+    <div
+      id="events"
+      class="list">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- TAREFAS -->
+<!-- =========================
+     TAREFAS
+========================= -->
 
 <section id="tasks">
 
@@ -508,14 +634,19 @@ body.dark{
 
     </div>
 
-    <div id="tasksList" class="list"></div>
+    <div
+      id="tasksList"
+      class="list">
+    </div>
 
   </div>
 
 </section>
 
 
-<!-- NOTAS -->
+<!-- =========================
+     NOTAS
+========================= -->
 
 <section id="notes">
 
@@ -553,7 +684,58 @@ body.dark{
 </div>
 
 
-<!-- BOTÃO + -->
+<!-- =========================
+     MENU DO +
+========================= -->
+
+<div
+  class="fab-menu"
+  id="fabMenu">
+
+  <button
+    class="fab-option"
+    data-fab-new="event">
+
+    <span>
+      📅
+    </span>
+
+    Compromisso
+
+  </button>
+
+
+  <button
+    class="fab-option"
+    data-fab-new="task">
+
+    <span>
+      ✅
+    </span>
+
+    Tarefa
+
+  </button>
+
+
+  <button
+    class="fab-option"
+    data-fab-new="note">
+
+    <span>
+      📝
+    </span>
+
+    Nota
+
+  </button>
+
+</div>
+
+
+<!-- =========================
+     BOTÃO +
+========================= -->
 
 <button
   class="fab"
@@ -562,36 +744,51 @@ body.dark{
 </button>
 
 
-<!-- MENU -->
+<!-- =========================
+     NAVEGAÇÃO
+========================= -->
 
 <nav class="nav">
 
   <button
     class="active"
     data-go="home">
+
     🏠<br>
     Início
+
   </button>
+
 
   <button data-go="agenda">
+
     📅<br>
     Agenda
+
   </button>
+
 
   <button data-go="tasks">
+
     ☑️<br>
     Tarefas
+
   </button>
 
+
   <button data-go="notes">
+
     📝<br>
     Notas
+
   </button>
 
 </nav>
 
 
-<!-- JANELA DE ADICIONAR / EDITAR -->
+<!-- =========================
+     JANELA DE ADICIONAR / EDITAR
+========================= -->
 
 <div
   class="modal"
@@ -608,7 +805,9 @@ body.dark{
       <button
         class="icon"
         id="close">
+
         ✕
+
       </button>
 
     </div>
@@ -620,7 +819,9 @@ body.dark{
 </div>
 
 
-<!-- FIREBASE -->
+<!-- =========================
+     FIREBASE
+========================= -->
 
 <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
 
@@ -658,11 +859,14 @@ const firebaseConfig = {
 };
 
 
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(
+  firebaseConfig
+);
 
 
 const auth =
   firebase.auth();
+
 
 const db =
   firebase.firestore();
@@ -680,13 +884,17 @@ let D = {
 
 };
 
-let M = new Date();
+let M =
+  new Date();
 
-let TYPE = "event";
+let TYPE =
+  "event";
 
-let EDIT_ID = null;
+let EDIT_ID =
+  null;
 
-let ready = false;
+let ready =
+  false;
 
 
 /* =========================
@@ -695,11 +903,16 @@ let ready = false;
 
 const $ =
   selector =>
-    document.querySelector(selector);
+    document.querySelector(
+      selector
+    );
+
 
 const $$ =
   selector =>
-    document.querySelectorAll(selector);
+    document.querySelectorAll(
+      selector
+    );
 
 
 /* =========================
@@ -712,11 +925,21 @@ function today(){
     new Date();
 
   return (
+
     d.getFullYear() +
+
     "-" +
-    String(d.getMonth()+1).padStart(2,"0") +
+
+    String(
+      d.getMonth() + 1
+    ).padStart(2,"0") +
+
     "-" +
-    String(d.getDate()).padStart(2,"0")
+
+    String(
+      d.getDate()
+    ).padStart(2,"0")
+
   );
 
 }
@@ -728,17 +951,21 @@ function today(){
 
 function esc(value){
 
-  return String(value ?? "")
-    .replace(
-      /[&<>"']/g,
-      c => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
-      }[c])
-    );
+  return String(
+    value ?? ""
+  )
+  .replace(
+    /[&<>"']/g,
+    c => ({
+
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+
+    }[c])
+  );
 
 }
 
@@ -754,7 +981,8 @@ function fmt(date){
 
   return new Date(
     date + "T12:00:00"
-  ).toLocaleDateString(
+  )
+  .toLocaleDateString(
     "pt-BR",
     {
       day:"2-digit",
@@ -785,14 +1013,29 @@ function task(t){
 
         <div style="flex:1">
 
-          <div class="${t.done ? "done" : ""}">
-            <b>${esc(t.title)}</b>
+          <div
+            class="${t.done ? "done" : ""}">
+
+            <b>
+              ${esc(t.title)}
+            </b>
+
           </div>
 
           <small>
-            ${esc(t.date || "Sem data")}
+
+            ${esc(
+              t.date ||
+              "Sem data"
+            )}
+
             •
-            ${esc(t.priority || "Normal")}
+
+            ${esc(
+              t.priority ||
+              "Normal"
+            )}
+
           </small>
 
         </div>
@@ -805,13 +1048,18 @@ function task(t){
         <button
           class="edit"
           data-edit-task="${esc(t.id)}">
+
           ✏️ Editar
+
         </button>
+
 
         <button
           class="danger"
           data-dt="${esc(t.id)}">
+
           🗑️ Excluir
+
         </button>
 
       </div>
@@ -867,15 +1115,22 @@ function render(){
           new Date(
             e.date +
             "T" +
-            (e.time || "23:59")
+            (
+              e.time ||
+              "23:59"
+            )
           ) >= n
       )
       .sort(
         (a,b) =>
-          (a.date+a.time)
-            .localeCompare(
-              b.date+b.time
-            )
+          (
+            a.date +
+            a.time
+          )
+          .localeCompare(
+            b.date +
+            b.time
+          )
       )
       .slice(0,5);
 
@@ -894,23 +1149,47 @@ function render(){
         </div>
 
         <small>
+
           ${fmt(e.date)}
-          ${e.time ? " • " + esc(e.time) : ""}
-          ${e.location ? " • " + esc(e.location) : ""}
+
+          ${
+            e.time
+            ?
+            " • " +
+            esc(e.time)
+            :
+            ""
+          }
+
+          ${
+            e.location
+            ?
+            " • " +
+            esc(e.location)
+            :
+            ""
+          }
+
         </small>
+
 
         <div class="item-actions">
 
           <button
             class="edit"
             data-edit-event="${esc(e.id)}">
+
             ✏️ Editar
+
           </button>
+
 
           <button
             class="danger"
             data-de="${esc(e.id)}">
+
             🗑️ Excluir
+
           </button>
 
         </div>
@@ -922,9 +1201,11 @@ function render(){
     :
 
     `
+
       <div class="muted">
         Nenhum compromisso próximo.
       </div>
+
     `;
 
 
@@ -932,19 +1213,26 @@ function render(){
 
   let tt =
     D.tasks.filter(
-      x => x.date == today()
+      x =>
+        x.date == today()
     );
 
 
   $("#today").innerHTML =
     tt.length
+
     ?
+
     tt.map(task).join("")
+
     :
+
     `
+
       <div class="muted">
         Nenhuma tarefa para hoje.
       </div>
+
     `;
 
 
@@ -952,26 +1240,39 @@ function render(){
 
   $("#tasksList").innerHTML =
     D.tasks.length
+
     ?
-    D.tasks.map(task).join("")
+
+    D.tasks
+      .map(task)
+      .join("")
+
     :
+
     `
+
       <div class="muted">
         Nenhuma tarefa cadastrada.
       </div>
+
     `;
 
 
   /* EVENTOS */
 
   let events =
-    [...D.events].sort(
-      (a,b) =>
-        (a.date+a.time)
-          .localeCompare(
-            b.date+b.time
+    [...D.events]
+      .sort(
+        (a,b) =>
+          (
+            a.date +
+            a.time
           )
-    );
+          .localeCompare(
+            b.date +
+            b.time
+          )
+      );
 
 
   $("#events").innerHTML =
@@ -988,18 +1289,44 @@ function render(){
         </div>
 
         <small>
+
           📅 ${fmt(e.date)}
-          ${e.time ? " • ⏰ " + esc(e.time) : ""}
-          ${e.location ? " • 📍 " + esc(e.location) : ""}
+
+          ${
+            e.time
+            ?
+            " • ⏰ " +
+            esc(e.time)
+            :
+            ""
+          }
+
+          ${
+            e.location
+            ?
+            " • 📍 " +
+            esc(e.location)
+            :
+            ""
+          }
+
         </small>
+
 
         ${
           e.notes
           ?
-          `<div class="muted" style="margin-top:7px">
+
+          `<div
+            class="muted"
+            style="margin-top:7px">
+
             ${esc(e.notes)}
+
           </div>`
+
           :
+
           ""
         }
 
@@ -1009,13 +1336,18 @@ function render(){
           <button
             class="edit"
             data-edit-event="${esc(e.id)}">
+
             ✏️ Editar
+
           </button>
+
 
           <button
             class="danger"
             data-de="${esc(e.id)}">
+
             🗑️ Excluir
+
           </button>
 
         </div>
@@ -1027,9 +1359,11 @@ function render(){
     :
 
     `
+
       <div class="muted">
         Nenhum compromisso cadastrado.
       </div>
+
     `;
 
 
@@ -1038,8 +1372,10 @@ function render(){
   let y =
     M.getFullYear();
 
+
   let m =
     M.getMonth();
+
 
   let days =
     new Date(
@@ -1047,6 +1383,7 @@ function render(){
       m + 1,
       0
     ).getDate();
+
 
   let first =
     new Date(
@@ -1061,7 +1398,8 @@ function render(){
       y,
       m,
       1
-    ).toLocaleDateString(
+    )
+    .toLocaleDateString(
       "pt-BR",
       {
         month:"long",
@@ -1070,12 +1408,13 @@ function render(){
     );
 
 
-  let c = "";
+  let c =
+    "";
 
 
   for(
-    let i=0;
-    i<first;
+    let i = 0;
+    i < first;
     i++
   ){
 
@@ -1085,22 +1424,26 @@ function render(){
 
 
   for(
-    let d=1;
-    d<=days;
+    let d = 1;
+    d <= days;
     d++
   ){
 
     let ds =
       y +
       "-" +
-      String(m+1).padStart(2,"0") +
+      String(
+        m + 1
+      ).padStart(2,"0") +
       "-" +
-      String(d).padStart(2,"0");
+      String(d)
+        .padStart(2,"0");
 
 
     let has =
       D.events.some(
-        e => e.date == ds
+        e =>
+          e.date == ds
       );
 
 
@@ -1117,7 +1460,9 @@ function render(){
           : ""
         }"
         data-day="${ds}">
+
         ${d}
+
       </button>
 
     `;
@@ -1132,8 +1477,11 @@ function render(){
   /* NOTAS */
 
   let q =
-    ($("#search").value || "")
-      .toLowerCase();
+    (
+      $("#search").value ||
+      ""
+    )
+    .toLowerCase();
 
 
   let ns =
@@ -1166,22 +1514,29 @@ function render(){
 
         </div>
 
+
         <p>
           ${esc(x.text)}
         </p>
+
 
         <div class="item-actions">
 
           <button
             class="edit"
             data-edit-note="${esc(x.id)}">
+
             ✏️ Editar
+
           </button>
+
 
           <button
             class="danger"
             data-dn="${esc(x.id)}">
+
             🗑️ Excluir
+
           </button>
 
         </div>
@@ -1193,9 +1548,11 @@ function render(){
     :
 
     `
+
       <div class="muted">
         Nenhuma anotação encontrada.
       </div>
+
     `;
 
 }
@@ -1210,12 +1567,16 @@ function go(id){
   $$("section")
     .forEach(
       x =>
-        x.classList.remove("active")
+        x.classList.remove(
+          "active"
+        )
     );
 
 
   $("#" + id)
-    .classList.add("active");
+    .classList.add(
+      "active"
+    );
 
 
   $$("[data-go]")
@@ -1237,7 +1598,10 @@ $$("[data-go]")
   .forEach(
     x =>
       x.onclick =
-        () => go(x.dataset.go)
+        () =>
+          go(
+            x.dataset.go
+          )
   );
 
 
@@ -1245,28 +1609,36 @@ $$("[data-go]")
    TEMA
 ========================= */
 
-$("#theme").onclick = () => {
+$("#theme").onclick =
+  () => {
 
-  document.body
-    .classList.toggle("dark");
-
-  localStorage.setItem(
-    "dark",
     document.body
-      .classList.contains("dark")
-  );
+      .classList.toggle(
+        "dark"
+      );
 
-};
+
+    localStorage.setItem(
+      "dark",
+      document.body
+        .classList.contains(
+          "dark"
+        )
+    );
+
+  };
 
 
 if(
-  localStorage.getItem("dark")
-  ==
-  "true"
+  localStorage.getItem(
+    "dark"
+  ) == "true"
 ){
 
   document.body
-    .classList.add("dark");
+    .classList.add(
+      "dark"
+    );
 
 }
 
@@ -1284,6 +1656,7 @@ function open(
   TYPE =
     type;
 
+
   EDIT_ID =
     edit
     ?
@@ -1293,10 +1666,13 @@ function open(
 
 
   $("#modal")
-    .classList.add("show");
+    .classList.add(
+      "show"
+    );
 
 
   $("#mtitle").textContent =
+
     edit
 
     ?
@@ -1305,10 +1681,13 @@ function open(
       type == "event"
       ?
       "Editar compromisso"
+
       :
+
       type == "task"
       ?
       "Editar tarefa"
+
       :
       "Editar anotação"
     )
@@ -1319,10 +1698,13 @@ function open(
       type == "event"
       ?
       "Novo compromisso"
+
       :
+
       type == "task"
       ?
       "Nova tarefa"
+
       :
       "Nova anotação"
     );
@@ -1332,23 +1714,33 @@ function open(
     $("#form");
 
 
-  /* COMPROMISSO */
+  /* =========================
+     COMPROMISSO
+  ========================= */
 
-  if(type == "event"){
+  if(
+    type == "event"
+  ){
 
     f.innerHTML = `
 
       <label>
+
         Título
 
         <input
           name="title"
           required
-          value="${esc(edit?.title || "")}">
+          value="${esc(
+            edit?.title ||
+            ""
+          )}">
+
       </label>
 
 
       <label>
+
         Data
 
         <input
@@ -1360,38 +1752,47 @@ function open(
             date ||
             today()
           )}">
+
       </label>
 
 
       <label>
+
         Horário
 
         <input
           name="time"
           type="time"
           value="${esc(
-            edit?.time || ""
+            edit?.time ||
+            ""
           )}">
+
       </label>
 
 
       <label>
+
         Local
 
         <input
           name="location"
           value="${esc(
-            edit?.location || ""
+            edit?.location ||
+            ""
           )}">
+
       </label>
 
 
       <label>
+
         Observações
 
         <textarea
           name="notes">${esc(
-            edit?.notes || ""
+            edit?.notes ||
+            ""
           )}</textarea>
 
       </label>
@@ -1403,12 +1804,17 @@ function open(
           type="button"
           class="icon"
           id="cancel">
+
           Cancelar
+
         </button>
+
 
         <button
           class="primary">
+
           💾 Salvar
+
         </button>
 
       </div>
@@ -1418,25 +1824,33 @@ function open(
   }
 
 
-  /* TAREFA */
+  /* =========================
+     TAREFA
+  ========================= */
 
-  if(type == "task"){
+  if(
+    type == "task"
+  ){
 
     f.innerHTML = `
 
       <label>
+
         Tarefa
 
         <input
           name="title"
           required
           value="${esc(
-            edit?.title || ""
+            edit?.title ||
+            ""
           )}">
+
       </label>
 
 
       <label>
+
         Data
 
         <input
@@ -1447,10 +1861,12 @@ function open(
             date ||
             today()
           )}">
+
       </label>
 
 
       <label>
+
         Prioridade
 
         <select name="priority">
@@ -1458,16 +1874,20 @@ function open(
           <option
             value="Normal"
             ${
-              (edit?.priority || "Normal")
-              ==
-              "Normal"
+              (
+                edit?.priority ||
+                "Normal"
+              ) == "Normal"
               ?
               "selected"
               :
               ""
             }>
+
             Normal
+
           </option>
+
 
           <option
             value="Alta"
@@ -1478,8 +1898,11 @@ function open(
               :
               ""
             }>
+
             Alta
+
           </option>
+
 
           <option
             value="Baixa"
@@ -1490,7 +1913,9 @@ function open(
               :
               ""
             }>
+
             Baixa
+
           </option>
 
         </select>
@@ -1504,12 +1929,17 @@ function open(
           type="button"
           class="icon"
           id="cancel">
+
           Cancelar
+
         </button>
+
 
         <button
           class="primary">
+
           💾 Salvar
+
         </button>
 
       </div>
@@ -1519,31 +1949,40 @@ function open(
   }
 
 
-  /* ANOTAÇÃO */
+  /* =========================
+     ANOTAÇÃO
+  ========================= */
 
-  if(type == "note"){
+  if(
+    type == "note"
+  ){
 
     f.innerHTML = `
 
       <label>
+
         Título
 
         <input
           name="title"
           required
           value="${esc(
-            edit?.title || ""
+            edit?.title ||
+            ""
           )}">
+
       </label>
 
 
       <label>
+
         Texto
 
         <textarea
           name="text"
           required>${esc(
-            edit?.text || ""
+            edit?.text ||
+            ""
           )}</textarea>
 
       </label>
@@ -1555,12 +1994,17 @@ function open(
           type="button"
           class="icon"
           id="cancel">
+
           Cancelar
+
         </button>
+
 
         <button
           class="primary">
+
           💾 Salvar
+
         </button>
 
       </div>
@@ -1583,9 +2027,12 @@ function open(
 function close(){
 
   $("#modal")
-    .classList.remove("show");
+    .classList.remove(
+      "show"
+    );
 
-  EDIT_ID = null;
+  EDIT_ID =
+    null;
 
 }
 
@@ -1603,22 +2050,29 @@ async function addDoc(
   o
 ){
 
-  if(!auth.currentUser)
+  if(
+    !auth.currentUser
+  )
     return;
 
 
   const ref =
-    db.collection("agenda").doc();
+    db
+      .collection("agenda")
+      .doc();
 
 
   o.id =
     ref.id;
 
+
   o.type =
     type;
 
+
   o.userId =
     auth.currentUser.uid;
+
 
   o.createdAt =
     firebase.firestore
@@ -1626,7 +2080,9 @@ async function addDoc(
       .serverTimestamp();
 
 
-  await ref.set(o);
+  await ref.set(
+    o
+  );
 
 }
 
@@ -1635,7 +2091,9 @@ async function addDoc(
    EXCLUIR
 ========================= */
 
-async function delDoc(id){
+async function delDoc(
+  id
+){
 
   await db
     .collection("agenda")
@@ -1687,7 +2145,9 @@ $("#form").onsubmit =
 
     let o =
       Object.fromEntries(
-        new FormData(e.target)
+        new FormData(
+          e.target
+        )
       );
 
 
@@ -1695,9 +2155,13 @@ $("#form").onsubmit =
 
       /* EDITANDO */
 
-      if(EDIT_ID){
+      if(
+        EDIT_ID
+      ){
 
-        if(TYPE == "task"){
+        if(
+          TYPE == "task"
+        ){
 
           const old =
             D.tasks.find(
@@ -1729,7 +2193,9 @@ $("#form").onsubmit =
 
       else{
 
-        if(TYPE == "task"){
+        if(
+          TYPE == "task"
+        ){
 
           o.done =
             false;
@@ -1750,7 +2216,10 @@ $("#form").onsubmit =
 
     }catch(err){
 
-      console.error(err);
+      console.error(
+        err
+      );
+
 
       alert(
         "Não foi possível salvar. " +
@@ -2047,6 +2516,8 @@ document.addEventListener(
         day.dataset.day
       );
 
+      return;
+
     }
 
   }
@@ -2091,10 +2562,58 @@ $("#search").oninput =
 
 /* =========================
    BOTÃO +
+   MENU RÁPIDO
 ========================= */
 
-$("#fab").onclick =
-  () => open("event");
+const fab =
+  $("#fab");
+
+
+const fabMenu =
+  $("#fabMenu");
+
+
+fab.onclick =
+  () => {
+
+    fabMenu.classList.toggle(
+      "show"
+    );
+
+    fab.classList.toggle(
+      "open"
+    );
+
+  };
+
+
+/* OPÇÕES DO MENU */
+
+$$("[data-fab-new]")
+  .forEach(
+    button => {
+
+      button.onclick =
+        () => {
+
+          open(
+            button.dataset.fabNew
+          );
+
+
+          fabMenu.classList.remove(
+            "show"
+          );
+
+
+          fab.classList.remove(
+            "open"
+          );
+
+        };
+
+    }
+  );
 
 
 /* =========================
@@ -2109,9 +2628,11 @@ function listen(){
       snapshot => {
 
         D = {
+
           events: [],
           tasks: [],
           notes: []
+
         };
 
 
@@ -2126,25 +2647,36 @@ function listen(){
               doc.id;
 
 
-            if(x.type == "event"){
+            if(
+              x.type ==
+              "event"
+            ){
 
-              D.events.push(x);
+              D.events.push(
+                x
+              );
 
             }
 
             else if(
-              x.type == "task"
+              x.type ==
+              "task"
             ){
 
-              D.tasks.push(x);
+              D.tasks.push(
+                x
+              );
 
             }
 
             else if(
-              x.type == "note"
+              x.type ==
+              "note"
             ){
 
-              D.notes.push(x);
+              D.notes.push(
+                x
+              );
 
             }
 
@@ -2152,15 +2684,21 @@ function listen(){
         );
 
 
-        ready = true;
+        ready =
+          true;
+
 
         render();
 
       },
 
+
       error => {
 
-        console.error(error);
+        console.error(
+          error
+        );
+
 
         alert(
           "Erro ao sincronizar a agenda."
@@ -2181,7 +2719,9 @@ async function startApp(){
 
   try{
 
-    if(!auth.currentUser){
+    if(
+      !auth.currentUser
+    ){
 
       await auth
         .signInAnonymously();
@@ -2191,10 +2731,12 @@ async function startApp(){
 
     listen();
 
-
   }catch(err){
 
-    console.error(err);
+    console.error(
+      err
+    );
+
 
     alert(
       "Não foi possível conectar à agenda.\n\n" +
