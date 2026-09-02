@@ -5,229 +5,1724 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
 <title>Minha Agenda</title>
-<link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css">
+
+<style>
+:root{
+--bg:#f5f7fb;
+--card:#fff;
+--text:#111827;
+--muted:#6b7280;
+--line:#e5e7eb;
+--p:#2563eb;
+--soft:#eff6ff
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+background:var(--bg);
+color:var(--text);
+font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+padding-bottom:90px
+}
+
+.app{
+max-width:760px;
+margin:auto;
+padding:18px
+}
+
+header,.row{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px
+}
+
+h1{font-size:24px}
+h2{font-size:20px}
+
+.hero,.card,.stat,.note{
+background:var(--card);
+border-radius:20px;
+box-shadow:0 8px 30px #0000000d;
+padding:17px;
+margin-bottom:14px
+}
+
+.hero{padding:22px}
+
+.hero .date{
+color:var(--p);
+font-weight:700
+}
+
+.muted,small{
+color:var(--muted)
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px
+}
+
+.stat strong{
+font-size:24px;
+display:block
+}
+
+.stat span{
+font-size:12px;
+color:var(--muted)
+}
+
+button{
+border:0;
+cursor:pointer
+}
+
+.icon{
+width:42px;
+height:42px;
+border-radius:14px;
+background:var(--card);
+color:var(--text)
+}
+
+.primary{
+background:var(--p);
+color:white;
+border-radius:13px;
+padding:11px 15px;
+font-weight:700
+}
+
+.list{
+display:grid;
+gap:10px
+}
+
+.item{
+border:1px solid var(--line);
+border-radius:15px;
+padding:13px
+}
+
+.danger{
+color:#dc2626;
+background:transparent
+}
+
+.done{
+text-decoration:line-through;
+opacity:.5
+}
+
+section{
+display:none
+}
+
+section.active{
+display:block
+}
+
+.nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+background:var(--card);
+border-top:1px solid var(--line);
+display:grid;
+grid-template-columns:repeat(4,1fr);
+padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+z-index:5
+}
+
+.nav button{
+background:transparent;
+color:var(--muted);
+padding:8px;
+border-radius:12px;
+font-size:12px
+}
+
+.nav button.active{
+background:var(--soft);
+color:var(--p);
+font-weight:700
+}
+
+.fab{
+position:fixed;
+right:20px;
+bottom:90px;
+width:58px;
+height:58px;
+border-radius:20px;
+background:var(--p);
+color:#fff;
+font-size:28px;
+z-index:4
+}
+
+.calendar-head{
+display:flex;
+justify-content:space-between;
+align-items:center
+}
+
+.cal button{
+width:34px;
+height:34px;
+border-radius:10px;
+background:var(--soft);
+color:var(--p)
+}
+
+.week,.days{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
+text-align:center
+}
+
+.week{
+color:var(--muted);
+font-size:12px;
+margin:12px 0 5px
+}
+
+.day{
+min-height:40px;
+border-radius:10px;
+background:transparent;
+color:var(--text)
+}
+
+.today{
+background:var(--p);
+color:#fff
+}
+
+.has{
+border:1px solid var(--p)
+}
+
+.notes{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px
+}
+
+.note{
+margin:0;
+box-shadow:none;
+border:1px solid var(--line);
+min-height:130px
+}
+
+.note p{
+white-space:pre-wrap;
+color:var(--muted);
+font-size:14px
+}
+
+input,textarea,select{
+width:100%;
+padding:13px;
+margin:6px 0 12px;
+border:1px solid var(--line);
+border-radius:13px;
+background:var(--bg);
+color:var(--text)
+}
+
+textarea{
+min-height:110px
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:#0008;
+display:none;
+align-items:flex-end;
+z-index:10
+}
+
+.modal.show{
+display:flex
+}
+
+.box{
+width:100%;
+max-width:760px;
+margin:auto;
+background:var(--card);
+border-radius:24px 24px 0 0;
+padding:20px;
+max-height:90vh;
+overflow:auto
+}
+
+.actions{
+display:flex;
+gap:10px
+}
+
+.actions>*{
+flex:1
+}
+
+body.dark{
+--bg:#0b1220;
+--card:#111827;
+--text:#f9fafb;
+--muted:#9ca3af;
+--line:#263247;
+--soft:#172554
+}
+
+#loginScreen{
+position:fixed;
+inset:0;
+background:var(--bg);
+z-index:50;
+overflow:auto
+}
+
+.login-box{
+max-width:420px;
+margin:0 auto;
+padding:40px 18px
+}
+
+.error{
+color:#dc2626;
+font-size:14px
+}
+
+.success{
+color:#16a34a;
+font-size:14px
+}
+
+@media(min-width:650px){
+.modal{
+align-items:center
+}
+
+.box{
+border-radius:24px;
+max-width:560px
+}
+
+.notes{
+grid-template-columns:repeat(3,1fr)
+}
+}
+</style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div>
-    <p class="eyebrow">ORGANIZAÇÃO</p>
-    <h1>Minha Agenda</h1>
-  </div>
+<div class="app">
 
-  <button id="themeBtn" class="icon-btn">☾</button>
+<header>
+<div>
+<div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em;margin-bottom:6px">
+ORGANIZAÇÃO
+</div>
+
+<h1 style="margin:0">
+Minha Agenda
+</h1>
+</div>
+
+<div style="display:flex;gap:8px">
+<button class="icon" id="theme" aria-label="Alternar tema">🌙</button>
+<button class="icon" id="logout" aria-label="Sair">↪</button>
+</div>
 </header>
 
-<main>
 
-<section id="inicio" class="screen active">
+<section id="home" class="active">
 
-  <div class="hello">
-    <div>
-      <p class="muted" id="dateText"></p>
-      <h2>Seu dia, do seu jeito.</h2>
-    </div>
+<div class="hero">
+<div class="date" id="date"></div>
 
-    <button class="primary small" data-action="event">
-      ＋ Adicionar
-    </button>
-  </div>
+<h2>
+Seu dia, do seu jeito.
+</h2>
 
-  <div class="stats">
-
-    <div class="card stat">
-      <span>📅</span>
-      <strong id="eventCount">0</strong>
-      <small>compromissos</small>
-    </div>
-
-    <div class="card stat">
-      <span>✅</span>
-      <strong id="taskCount">0</strong>
-      <small>tarefas abertas</small>
-    </div>
-
-    <div class="card stat">
-      <span>📝</span>
-      <strong id="noteCount">0</strong>
-      <small>notas</small>
-    </div>
-
-  </div>
-
-  <div class="section-head">
-    <h3>Próximos compromissos</h3>
-    <button class="text-btn" data-tab="agenda">Ver todos</button>
-  </div>
-
-  <div id="homeEvents" class="list"></div>
-
-  <div class="section-head">
-    <h3>Tarefas de hoje</h3>
-    <button class="text-btn" data-tab="tarefas">Ver todas</button>
-  </div>
-
-  <div id="homeTasks" class="list"></div>
-
-</section>
+<div class="muted">
+Compromissos, tarefas e anotações em um só lugar.
+</div>
+</div>
 
 
-<section id="agenda" class="screen">
+<div class="stats">
 
-  <div class="section-title">
+<div class="stat">
+<strong id="ec">0</strong>
+<span>Compromissos</span>
+</div>
 
-    <div>
-      <p class="eyebrow">CALENDÁRIO</p>
-      <h2>Agenda</h2>
-    </div>
+<div class="stat">
+<strong id="tc">0</strong>
+<span>Tarefas abertas</span>
+</div>
 
-    <button class="primary" data-action="event">
-      ＋ Evento
-    </button>
-
-  </div>
-
-  <div class="calendar card">
-
-    <div class="calendar-head">
-      <button id="prevMonth">‹</button>
-      <strong id="monthTitle"></strong>
-      <button id="nextMonth">›</button>
-    </div>
-
-    <div class="weekdays">
-      <span>DOM</span>
-      <span>SEG</span>
-      <span>TER</span>
-      <span>QUA</span>
-      <span>QUI</span>
-      <span>SEX</span>
-      <span>SÁB</span>
-    </div>
-
-    <div id="calendarGrid" class="calendar-grid"></div>
-
-  </div>
-
-  <div class="section-head">
-    <h3 id="selectedDateTitle">Compromissos</h3>
-  </div>
-
-  <div id="eventList" class="list"></div>
-
-</section>
-
-
-<section id="tarefas" class="screen">
-
-  <div class="section-title">
-
-    <div>
-      <p class="eyebrow">PENDÊNCIAS</p>
-      <h2>Tarefas</h2>
-    </div>
-
-    <button class="primary" data-action="task">
-      ＋ Tarefa
-    </button>
-
-  </div>
-
-  <div id="taskList" class="list"></div>
-
-  <div id="emptyTasks" class="empty">
-    Nenhuma tarefa cadastrada.
-  </div>
-
-</section>
-
-
-<section id="notas" class="screen">
-
-  <div class="section-title">
-
-    <div>
-      <p class="eyebrow">ANOTAÇÕES</p>
-      <h2>Notas</h2>
-    </div>
-
-    <button class="primary" data-action="note">
-      ＋ Nota
-    </button>
-
-  </div>
-
-  <input
-    id="noteSearch"
-    class="search"
-    placeholder="🔎 Pesquisar notas..."
-  >
-
-  <div id="noteList" class="notes-grid"></div>
-
-  <div id="emptyNotes" class="empty">
-    Nenhuma nota cadastrada.
-  </div>
-
-</section>
-
-</main>
-
-
-<nav class="bottom-nav">
-
-  <button class="nav active" data-tab="inicio">
-    <span>⌂</span>
-    <small>Início</small>
-  </button>
-
-  <button class="nav" data-tab="agenda">
-    <span>▣</span>
-    <small>Agenda</small>
-  </button>
-
-  <button class="nav" data-tab="tarefas">
-    <span>✓</span>
-    <small>Tarefas</small>
-  </button>
-
-  <button class="nav" data-tab="notas">
-    <span>✎</span>
-    <small>Notas</small>
-  </button>
-
-</nav>
-
-
-<div id="modal" class="modal hidden">
-
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3 id="modalTitle">Adicionar</h3>
-      <button id="closeModal" class="icon-btn">×</button>
-    </div>
-
-    <form id="form">
-
-      <div id="formFields"></div>
-
-      <button class="primary full" type="submit">
-        Salvar
-      </button>
-
-    </form>
-
-  </div>
+<div class="stat">
+<strong id="nc">0</strong>
+<span>Anotações</span>
+</div>
 
 </div>
 
 
-<div id="toast" class="toast"></div>
+<div class="card">
 
-<script src="app.js"></script>
+<h2>
+Próximos compromissos
+</h2>
+
+<div id="up" class="list"></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+Tarefas de hoje
+</h2>
+
+<div id="today" class="list"></div>
+
+</div>
+
+</section>
+
+
+
+<section id="agenda">
+
+<div class="card">
+
+<div class="calendar-head">
+
+<h2 id="month"></h2>
+
+<div class="cal">
+<button id="prev">‹</button>
+<button id="next">›</button>
+</div>
+
+</div>
+
+<div class="week">
+<span>Dom</span>
+<span>Seg</span>
+<span>Ter</span>
+<span>Qua</span>
+<span>Qui</span>
+<span>Sex</span>
+<span>Sáb</span>
+</div>
+
+<div id="cal" class="days"></div>
+
+</div>
+
+
+<div class="card">
+
+<div class="row">
+
+<h2>
+Compromissos
+</h2>
+
+<button class="primary" data-new="event">
++ Novo
+</button>
+
+</div>
+
+<div id="events" class="list"></div>
+
+</div>
+
+</section>
+
+
+
+<section id="tasks">
+
+<div class="card">
+
+<div class="row">
+
+<h2>
+Tarefas
+</h2>
+
+<button class="primary" data-new="task">
++ Nova
+</button>
+
+</div>
+
+<div id="tasksList" class="list"></div>
+
+</div>
+
+</section>
+
+
+
+<section id="notes">
+
+<div class="card">
+
+<div class="row">
+
+<h2>
+Anotações
+</h2>
+
+<button class="primary" data-new="note">
++ Nova
+</button>
+
+</div>
+
+<input
+id="search"
+placeholder="Pesquisar anotações..."
+>
+
+<div id="notesList" class="notes"></div>
+
+</div>
+
+</section>
+
+</div>
+
+
+
+<button class="fab" id="fab">
++
+</button>
+
+
+
+<nav class="nav">
+
+<button class="active" data-go="home">
+⌂
+<br>
+Início
+</button>
+
+<button data-go="agenda">
+▣
+<br>
+Agenda
+</button>
+
+<button data-go="tasks">
+✓
+<br>
+Tarefas
+</button>
+
+<button data-go="notes">
+✎
+<br>
+Notas
+</button>
+
+</nav>
+
+
+
+<div class="modal" id="modal">
+
+<div class="box">
+
+<div class="row">
+
+<h2 id="mtitle">
+Novo
+</h2>
+
+<button class="icon" id="close">
+✕
+</button>
+
+</div>
+
+<form id="form"></form>
+
+</div>
+
+</div>
+
+
+
+<!-- FIREBASE -->
+
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore-compat.js"></script>
+
+
+<script>
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyAsf0YLK7c5FOBuw8q05iETDIGTjANkHKE",
+
+authDomain: "minha-agenda-253ad.firebaseapp.com",
+
+projectId: "minha-agenda-253ad",
+
+storageBucket: "minha-agenda-253ad.firebasestorage.app",
+
+messagingSenderId: "56708978577",
+
+appId: "1:56708978577:web:21180db43c6aa0b5122c30"
+
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+
+const auth = firebase.auth();
+
+const db = firebase.firestore();
+
+
+const K = "minhaAgendaV1";
+
+
+let D = {
+events: [],
+tasks: [],
+notes: []
+};
+
+
+let M = new Date();
+
+let TYPE = "event";
+
+let unsubscribe = null;
+
+let ready = false;
+
+
+
+const $ = s => document.querySelector(s);
+
+const $$ = s => document.querySelectorAll(s);
+
+const today = () => {
+
+const d = new Date();
+
+const y = d.getFullYear();
+
+const m = String(d.getMonth()+1).padStart(2,"0");
+
+const day = String(d.getDate()).padStart(2,"0");
+
+return `${y}-${m}-${day}`;
+
+};
+
+
+
+const esc = s => String(s ?? "").replace(
+/[&<>"']/g,
+c => ({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
+);
+
+
+
+const fmt = d => {
+
+if(!d) return "";
+
+return new Date(d+"T12:00:00").toLocaleDateString(
+"pt-BR",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+);
+
+};
+
+
+
+function render(){
+
+const n = new Date();
+
+
+$("#date").textContent =
+n.toLocaleDateString(
+"pt-BR",
+{
+weekday:"long",
+day:"numeric",
+month:"long"
+}
+);
+
+
+$("#ec").textContent = D.events.length;
+
+$("#tc").textContent =
+D.tasks.filter(x => !x.done).length;
+
+$("#nc").textContent =
+D.notes.length;
+
+
+
+let ev = [...D.events]
+
+.filter(e => {
+
+if(!e.date) return false;
+
+return new Date(
+e.date+"T"+(e.time||"23:59")
+) >= n;
+
+})
+
+.sort(
+(a,b) =>
+(a.date+(a.time||""))
+.localeCompare(
+b.date+(b.time||"")
+)
+)
+
+.slice(0,5);
+
+
+
+$("#up").innerHTML =
+ev.length
+?
+ev.map(e =>
+
+'<div class="item">'+
+'<b>'+esc(e.title)+'</b>'+
+'<br>'+
+'<small>'+
+fmt(e.date)+
+(e.time ? " • "+esc(e.time) : "")+
+(e.location ? " • "+esc(e.location) : "")+
+'</small>'+
+'</div>'
+
+).join("")
+
+:
+
+'<div class="muted">Nenhum compromisso próximo.</div>';
+
+
+
+let tt = D.tasks.filter(
+x => x.date == today()
+);
+
+
+$("#today").innerHTML =
+tt.length
+?
+tt.map(task).join("")
+:
+'<div class="muted">Nenhuma tarefa para hoje.</div>';
+
+
+
+$("#tasksList").innerHTML =
+D.tasks.length
+?
+D.tasks.map(task).join("")
+:
+'<div class="muted">Nenhuma tarefa cadastrada.</div>';
+
+
+
+$("#events").innerHTML =
+D.events.length
+?
+
+D.events
+
+.sort(
+(a,b)=>
+(a.date+(a.time||""))
+.localeCompare(
+b.date+(b.time||"")
+)
+)
+
+.map(e =>
+
+'<div class="item row">'+
+
+'<div>'+
+
+'<b>'+esc(e.title)+'</b>'+
+
+'<br>'+
+
+'<small>'+
+fmt(e.date)+
+(e.time ? " • "+esc(e.time) : "")+
+(e.location ? " • "+esc(e.location) : "")+
+'</small>'+
+
+(e.notes ?
+'<div class="muted">'+
+esc(e.notes)+
+'</div>'
+:
+''
+)+
+
+'</div>'+
+
+'<button class="danger" data-de="'+
+e.id+
+'">Excluir</button>'+
+
+'</div>'
+
+)
+
+.join("")
+
+:
+
+'<div class="muted">Nenhum compromisso cadastrado.</div>';
+
+
+
+let y = M.getFullYear();
+
+let m = M.getMonth();
+
+let days =
+new Date(y,m+1,0).getDate();
+
+let first =
+new Date(y,m,1).getDay();
+
+
+$("#month").textContent =
+new Date(y,m,1).toLocaleDateString(
+"pt-BR",
+{
+month:"long",
+year:"numeric"
+}
+);
+
+
+
+let c = "";
+
+for(let i=0;i<first;i++){
+c += "<span></span>";
+}
+
+
+for(let d=1;d<=days;d++){
+
+const dateObj = new Date(y,m,d);
+
+const ds =
+`${dateObj.getFullYear()}-`+
+`${String(dateObj.getMonth()+1).padStart(2,"0")}-`+
+`${String(dateObj.getDate()).padStart(2,"0")}`;
+
+
+c +=
+
+'<button class="day '+
+(ds == today() ? "today " : "")+
+(D.events.some(e => e.date == ds) ? "has" : "")+
+'" data-day="'+ds+'">'+
+d+
+'</button>';
+
+}
+
+
+$("#cal").innerHTML = c;
+
+
+
+let q =
+($("#search").value || "").toLowerCase();
+
+
+let ns =
+D.notes.filter(
+x =>
+((x.title||"")+" "+(x.text||""))
+.toLowerCase()
+.includes(q)
+);
+
+
+$("#notesList").innerHTML =
+ns.length
+?
+
+ns.map(x =>
+
+'<div class="note">'+
+
+'<div class="row">'+
+
+'<b>'+esc(x.title)+'</b>'+
+
+'<button class="danger" data-dn="'+
+x.id+
+'">Excluir</button>'+
+
+'</div>'+
+
+'<p>'+
+esc(x.text)+
+'</p>'+
+
+'</div>'
+
+).join("")
+
+:
+
+'<div class="muted">Nenhuma anotação encontrada.</div>';
+
+}
+
+
+
+function task(t){
+
+return (
+
+'<div class="item row">'+
+
+'<div>'+
+
+'<label style="display:flex;align-items:center;gap:8px">'+
+
+'<input type="checkbox" data-toggle="'+
+t.id+
+'" '+
+(t.done ? "checked" : "")+
+' style="width:auto;margin:0">'+
+
+'<span class="'+
+(t.done ? "done" : "")+
+'">'+
+esc(t.title)+
+'</span>'+
+
+'</label>'+
+
+'<br>'+
+
+'<small>'+
+esc(t.date || "Sem data")+
+" • "+
+esc(t.priority || "Normal")+
+'</small>'+
+
+'</div>'+
+
+'<button class="danger" data-dt="'+
+t.id+
+'">Excluir</button>'+
+
+'</div>'
+
+);
+
+}
+
+
+
+function go(id){
+
+$$("section").forEach(
+x => x.classList.remove("active")
+);
+
+$("#"+id).classList.add("active");
+
+
+$$("[data-go]").forEach(
+x =>
+x.classList.toggle(
+"active",
+x.dataset.go == id
+)
+);
+
+}
+
+
+
+$$("[data-go]").forEach(
+x =>
+x.onclick =
+() => go(x.dataset.go)
+);
+
+
+
+$("#logout").onclick =
+() => auth.signOut();
+
+
+
+$("#theme").onclick = () => {
+
+document.body.classList.toggle("dark");
+
+localStorage.setItem(
+"dark",
+document.body.classList.contains("dark")
+);
+
+};
+
+
+
+if(
+localStorage.getItem("dark") == "true"
+){
+document.body.classList.add("dark");
+}
+
+
+
+function open(type,date=""){
+
+TYPE = type;
+
+$("#modal").classList.add("show");
+
+
+$("#mtitle").textContent =
+type == "event"
+?
+"Novo compromisso"
+:
+type == "task"
+?
+"Nova tarefa"
+:
+"Nova anotação";
+
+
+const f = $("#form");
+
+
+
+if(type == "event"){
+
+f.innerHTML =
+
+'<label>Título'+
+'<input name="title" required>'+
+'</label>'+
+
+'<label>Data'+
+'<input name="date" type="date" value="'+
+(date || today())+
+'" required>'+
+'</label>'+
+
+'<label>Horário'+
+'<input name="time" type="time">'+
+'</label>'+
+
+'<label>Local'+
+'<input name="location">'+
+'</label>'+
+
+'<label>Observações'+
+'<textarea name="notes"></textarea>'+
+'</label>'+
+
+'<div class="actions">'+
+
+'<button type="button" class="icon" id="cancel">'+
+'Cancelar'+
+'</button>'+
+
+'<button class="primary">'+
+'Salvar'+
+'</button>'+
+
+'</div>';
+
+}
+
+
+
+if(type == "task"){
+
+f.innerHTML =
+
+'<label>Tarefa'+
+'<input name="title" required>'+
+'</label>'+
+
+'<label>Data'+
+'<input name="date" type="date" value="'+
+(date || today())+
+'">'+
+'</label>'+
+
+'<label>Prioridade'+
+
+'<select name="priority">'+
+
+'<option>Normal</option>'+
+'<option>Alta</option>'+
+'<option>Baixa</option>'+
+
+'</select>'+
+
+'</label>'+
+
+'<div class="actions">'+
+
+'<button type="button" class="icon" id="cancel">'+
+'Cancelar'+
+'</button>'+
+
+'<button class="primary">'+
+'Salvar'+
+'</button>'+
+
+'</div>';
+
+}
+
+
+
+if(type == "note"){
+
+f.innerHTML =
+
+'<label>Título'+
+'<input name="title" required>'+
+'</label>'+
+
+'<label>Texto'+
+'<textarea name="text" required></textarea>'+
+'</label>'+
+
+'<div class="actions">'+
+
+'<button type="button" class="icon" id="cancel">'+
+'Cancelar'+
+'</button>'+
+
+'<button class="primary">'+
+'Salvar'+
+'</button>'+
+
+'</div>';
+
+}
+
+
+$("#cancel").onclick = close;
+
+}
+
+
+
+function close(){
+
+$("#modal").classList.remove("show");
+
+}
+
+
+$("#close").onclick = close;
+
+
+
+async function addDoc(type,o){
+
+if(!auth.currentUser){
+throw new Error("Usuário não autenticado");
+}
+
+
+const ref =
+db.collection("agenda").doc();
+
+
+o.id = ref.id;
+
+o.type = type;
+
+o.userId = auth.currentUser.uid;
+
+o.createdAt =
+firebase.firestore.FieldValue.serverTimestamp();
+
+
+await ref.set(o);
+
+}
+
+
+
+async function delDoc(id){
+
+await db
+.collection("agenda")
+.doc(id)
+.delete();
+
+}
+
+
+
+async function updateDoc(id,data){
+
+await db
+.collection("agenda")
+.doc(id)
+.update(data);
+
+}
+
+
+
+$("#form").onsubmit =
+async e => {
+
+e.preventDefault();
+
+
+if(!ready) return;
+
+
+let o =
+Object.fromEntries(
+new FormData(e.target)
+);
+
+
+if(TYPE == "task"){
+o.done = false;
+}
+
+
+try{
+
+await addDoc(TYPE,o);
+
+close();
+
+}
+
+catch(err){
+
+console.error(err);
+
+alert(
+"Não foi possível salvar. Verifique sua conexão e as regras do Firestore."
+);
+
+}
+
+};
+
+
+
+document.addEventListener(
+"click",
+async e => {
+
+
+let n =
+e.target.closest("[data-new]");
+
+if(n){
+open(n.dataset.new);
+}
+
+
+
+let d =
+e.target.closest("[data-dt]");
+
+if(d){
+
+try{
+
+await delDoc(d.dataset.dt);
+
+}
+
+catch(err){
+
+alert("Erro ao excluir");
+
+}
+
+}
+
+
+
+let de =
+e.target.closest("[data-de]");
+
+if(de){
+
+try{
+
+await delDoc(de.dataset.de);
+
+}
+
+catch(err){
+
+alert("Erro ao excluir");
+
+}
+
+}
+
+
+
+let dn =
+e.target.closest("[data-dn]");
+
+if(dn){
+
+try{
+
+await delDoc(dn.dataset.dn);
+
+}
+
+catch(err){
+
+alert("Erro ao excluir");
+
+}
+
+}
+
+
+
+let tg =
+e.target.closest("[data-toggle]");
+
+if(tg){
+
+try{
+
+await updateDoc(
+tg.dataset.toggle,
+{
+done:tg.checked
+}
+);
+
+}
+
+catch(err){
+
+alert("Erro ao atualizar");
+
+}
+
+}
+
+
+
+let day =
+e.target.closest("[data-day]");
+
+if(day){
+
+open(
+"event",
+day.dataset.day
+);
+
+}
+
+}
+
+);
+
+
+
+$("#prev").onclick =
+() => {
+
+M.setMonth(
+M.getMonth()-1
+);
+
+render();
+
+};
+
+
+
+$("#next").onclick =
+() => {
+
+M.setMonth(
+M.getMonth()+1
+);
+
+render();
+
+};
+
+
+
+$("#search").oninput = render;
+
+
+$("#fab").onclick =
+() => open("event");
+
+
+
+/* LOGIN */
+
+const login =
+document.createElement("div");
+
+
+login.id =
+"loginScreen";
+
+
+login.innerHTML =
+
+'<div class="login-box">'+
+
+'<div style="font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em">'+
+'MINHA AGENDA'+
+'</div>'+
+
+'<h1>Entrar</h1>'+
+
+'<p class="muted">'+
+'Entre com um dos usuários cadastrados para acessar a agenda compartilhada.'+
+'</p>'+
+
+'<input id="email" type="email" placeholder="E-mail" autocomplete="username">'+
+
+'<input id="password" type="password" placeholder="Senha" autocomplete="current-password">'+
+
+'<button id="loginBtn" class="primary" style="width:100%;padding:14px">'+
+'Entrar'+
+'</button>'+
+
+'<p id="loginMsg" class="muted" style="margin-top:12px"></p>'+
+
+'</div>';
+
+
+document.body.appendChild(login);
+
+
+
+$("#loginBtn").onclick =
+async () => {
+
+const email =
+$("#email").value.trim();
+
+const password =
+$("#password").value;
+
+
+$("#loginMsg").textContent =
+"Entrando...";
+
+
+$("#loginMsg").className =
+"muted";
+
+
+try{
+
+await auth.signInWithEmailAndPassword(
+email,
+password
+);
+
+}
+
+catch(err){
+
+console.error(err);
+
+$("#loginMsg").textContent =
+"E-mail ou senha incorretos.";
+
+$("#loginMsg").className =
+"error";
+
+}
+
+};
+
+
+
+async function migrateLocal(){
+
+let old;
+
+
+try{
+
+old =
+JSON.parse(
+localStorage.getItem(K) || "null"
+);
+
+}
+
+catch(e){
+
+old = null;
+
+}
+
+
+if(
+!old ||
+(
+!old.events?.length &&
+!old.tasks?.length &&
+!old.notes?.length
+)
+){
+
+return;
+
+}
+
+
+const snap =
+await db
+.collection("agenda")
+.limit(1)
+.get();
+
+
+if(!snap.empty){
+return;
+}
+
+
+const batch =
+db.batch();
+
+
+for(
+const type of
+["events","tasks","notes"]
+){
+
+for(
+const o of
+(old[type] || [])
+){
+
+const ref =
+db.collection("agenda").doc();
+
+
+batch.set(
+ref,
+{
+...o,
+id:ref.id,
+type:type.slice(0,-1),
+userId:auth.currentUser.uid,
+createdAt:
+firebase.firestore.FieldValue.serverTimestamp()
+}
+);
+
+}
+
+}
+
+
+await batch.commit();
+
+
+localStorage.removeItem(K);
+
+}
+
+
+
+function listen(){
+
+if(unsubscribe){
+unsubscribe();
+}
+
+
+unsubscribe =
+db
+.collection("agenda")
+.onSnapshot(
+
+snap => {
+
+D = {
+events:[],
+tasks:[],
+notes:[]
+};
+
+
+snap.forEach(
+doc => {
+
+const o = {
+id:doc.id,
+...doc.data()
+};
+
+
+if(o.type === "event"){
+D.events.push(o);
+}
+
+
+if(o.type === "task"){
+D.tasks.push(o);
+}
+
+
+if(o.type === "note"){
+D.notes.push(o);
+}
+
+});
+
+
+ready = true;
+
+render();
+
+},
+
+err => {
+
+console.error(err);
+
+ready = false;
+
+alert(
+"Não foi possível acessar a agenda. Verifique as regras do Firestore."
+);
+
+}
+
+);
+
+}
+
+
+
+auth.onAuthStateChanged(
+async user => {
+
+if(!user){
+
+ready = false;
+
+login.style.display =
+"block";
+
+return;
+
+}
+
+
+login.style.display =
+"none";
+
+
+try{
+
+await migrateLocal();
+
+}
+
+catch(e){
+
+console.warn(e);
+
+}
+
+
+listen();
+
+}
+
+);
+
+
+
+render();
+
+</script>
 
 </body>
 </html>
