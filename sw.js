@@ -1,6 +1,6 @@
-const CACHE="minha-agenda-v2";
+const CACHE = "minha-agenda-v1";
 
-const FILES=[
+const FILES = [
   "./",
   "./index.html",
   "./style.css",
@@ -8,16 +8,28 @@ const FILES=[
   "./manifest.json"
 ];
 
-self.addEventListener("install",event=>{
+self.addEventListener("install", event => {
+
   event.waitUntil(
-    caches.open(CACHE).then(cache=>cache.addAll(FILES))
+    caches.open(CACHE)
+      .then(cache => cache.addAll(FILES))
   );
+
 });
 
-self.addEventListener("fetch",event=>{
+
+self.addEventListener("fetch", event => {
+
   event.respondWith(
-    caches.match(event.request).then(cached=>{
-      return cached || fetch(event.request);
-    })
+
+    caches.match(event.request)
+      .then(cached => {
+
+        return cached ||
+          fetch(event.request);
+
+      })
+
   );
+
 });
