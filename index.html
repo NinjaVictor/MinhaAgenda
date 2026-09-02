@@ -530,7 +530,7 @@ body.dark{
   <div class="card">
 
     <h2>
-      Tarefas de hoje
+      Tarefas
     </h2>
 
     <div
@@ -1048,13 +1048,6 @@ function task(t){
           <small>
 
             ${esc(
-              t.date ||
-              "Sem data"
-            )}
-
-            •
-
-            ${esc(
               t.priority ||
               "Normal"
             )}
@@ -1222,28 +1215,21 @@ function render(){
     `;
 
 
-  /* TAREFAS DE HOJE */
-
-  let tt =
-    D.tasks.filter(
-      x =>
-        x.date == today()
-    );
-
+  /* TAREFAS */
 
   $("#today").innerHTML =
-    tt.length
+    D.tasks.length
 
     ?
 
-    tt.map(task).join("")
+    D.tasks.map(task).join("")
 
     :
 
     `
 
       <div class="muted">
-        Nenhuma tarefa para hoje.
+        Nenhuma tarefa cadastrada.
       </div>
 
     `;
@@ -1905,22 +1891,6 @@ function open(
           value="${esc(
             edit?.title ||
             ""
-          )}">
-
-      </label>
-
-
-      <label>
-
-        Data
-
-        <input
-          name="date"
-          type="date"
-          value="${esc(
-            edit?.date ||
-            date ||
-            today()
           )}">
 
       </label>
