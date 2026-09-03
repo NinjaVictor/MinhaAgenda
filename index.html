@@ -157,6 +157,53 @@ button{
   margin-top:2px;
 }
 
+
+/* =========================
+   PRIORIDADE DAS TAREFAS
+========================= */
+
+.priority{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  margin-left:8px;
+  white-space:nowrap;
+}
+
+.priority-alta{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+.priority-normal{
+  background:#fef3c7;
+  color:#b45309;
+}
+
+.priority-baixa{
+  background:#dbeafe;
+  color:#2563eb;
+}
+
+body.dark .priority-alta{
+  background:#450a0a;
+  color:#f87171;
+}
+
+body.dark .priority-normal{
+  background:#451a03;
+  color:#fbbf24;
+}
+
+body.dark .priority-baixa{
+  background:#172554;
+  color:#60a5fa;
+}
+
+
 section{
   display:none;
 }
@@ -1023,6 +1070,16 @@ function fmt(date){
 
 function task(t){
 
+  const priority =
+    t.priority || "Normal";
+
+  const priorityClass =
+    priority == "Alta"
+      ? "priority-alta"
+      : priority == "Baixa"
+        ? "priority-baixa"
+        : "priority-normal";
+
   return `
 
     <div class="item">
@@ -1037,22 +1094,23 @@ function task(t){
         <div style="flex:1">
 
           <div
+            style="
+              display:flex;
+              align-items:center;
+              flex-wrap:wrap;
+              gap:4px;
+            "
             class="${t.done ? "done" : ""}">
 
             <b>
               ${esc(t.title)}
             </b>
 
+            <span class="priority ${priorityClass}">
+              ${esc(priority)}
+            </span>
+
           </div>
-
-          <small>
-
-            ${esc(
-              t.priority ||
-              "Normal"
-            )}
-
-          </small>
 
         </div>
 
@@ -1222,7 +1280,23 @@ function render(){
 
     ?
 
-    D.tasks.map(task).join("")
+    [...D.tasks]
+      .sort((a,b) => {
+
+        const ordem = {
+          "Alta": 1,
+          "Normal": 2,
+          "Baixa": 3
+        };
+
+        return (
+          (ordem[a.priority] || 2) -
+          (ordem[b.priority] || 2)
+        );
+
+      })
+      .map(task)
+      .join("")
 
     :
 
@@ -1242,7 +1316,21 @@ function render(){
 
     ?
 
-    D.tasks
+    [...D.tasks]
+      .sort((a,b) => {
+
+        const ordem = {
+          "Alta": 1,
+          "Normal": 2,
+          "Baixa": 3
+        };
+
+        return (
+          (ordem[a.priority] || 2) -
+          (ordem[b.priority] || 2)
+        );
+
+      })
       .map(task)
       .join("")
 
