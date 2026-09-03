@@ -118,6 +118,19 @@ button{
   padding:8px 11px;
 }
 
+.map-button{
+  background:#dcfce7;
+  color:#15803d;
+  border-radius:10px;
+  padding:8px 11px;
+  font-weight:700;
+}
+
+body.dark .map-button{
+  background:#052e16;
+  color:#4ade80;
+}
+
 .list{
   display:grid;
   gap:10px;
@@ -1065,6 +1078,52 @@ function fmt(date){
 
 
 /* =========================
+   ABRIR GOOGLE MAPS
+========================= */
+
+function openMaps(location){
+
+  if(!location)
+    return;
+
+  const query =
+    encodeURIComponent(
+      location
+    );
+
+  const mapsApp =
+    "googlemaps://?q=" +
+    query;
+
+  const mapsWeb =
+    "https://www.google.com/maps/search/?api=1&query=" +
+    query;
+
+  /*
+    Primeiro tenta abrir o aplicativo
+    Google Maps.
+
+    Se o aplicativo não responder,
+    abre o Google Maps pelo navegador.
+  */
+
+  window.location.href =
+    mapsApp;
+
+  setTimeout(
+    () => {
+
+      window.location.href =
+        mapsWeb;
+
+    },
+    700
+  );
+
+}
+
+
+/* =========================
    RENDERIZAR TAREFA
 ========================= */
 
@@ -1228,7 +1287,7 @@ function render(){
           ${
             e.location
             ?
-            " • " +
+            " • 📍 " +
             esc(e.location)
             :
             ""
@@ -1238,6 +1297,24 @@ function render(){
 
 
         <div class="item-actions">
+
+          ${
+            e.location
+            ?
+            `
+            <button
+              type="button"
+              class="map-button"
+              data-maps="${esc(e.location)}">
+
+              📍 Ver no mapa
+
+            </button>
+            `
+            :
+            ""
+          }
+
 
           <button
             class="edit"
@@ -1433,6 +1510,24 @@ function render(){
 
 
         <div class="item-actions">
+
+          ${
+            e.location
+            ?
+            `
+            <button
+              type="button"
+              class="map-button"
+              data-maps="${esc(e.location)}">
+
+              📍 Ver no mapa
+
+            </button>
+            `
+            :
+            ""
+          }
+
 
           <button
             class="edit"
@@ -1908,10 +2003,11 @@ function open(
 
       <label>
 
-        Local
+        📍 Localização
 
         <input
           name="location"
+          placeholder="Ex.: Hospital de Base, Brasília"
           value="${esc(
             edit?.location ||
             ""
@@ -2357,6 +2453,25 @@ $("#form").onsubmit =
 document.addEventListener(
   "click",
   async e => {
+
+    /* ABRIR MAPS */
+
+    let map =
+      e.target.closest(
+        "[data-maps]"
+      );
+
+
+    if(map){
+
+      openMaps(
+        map.dataset.maps
+      );
+
+      return;
+
+    }
+
 
     /* NOVO */
 
