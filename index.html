@@ -26,7 +26,7 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:system-ui,sans-serif;
-  padding-bottom:80px;
+  padding-bottom:90px;
 }
 
 .app{
@@ -172,7 +172,7 @@ body.dark .map-button{
 
 
 /* =========================
-   PRIORIDADE DAS TAREFAS
+   PRIORIDADE
 ========================= */
 
 .priority{
@@ -217,6 +217,32 @@ body.dark .priority-baixa{
 }
 
 
+/* =========================
+   LOCALIZAÇÕES
+========================= */
+
+.location-icon{
+  font-size:28px;
+  margin-bottom:7px;
+}
+
+.location-address{
+  color:var(--muted);
+  font-size:14px;
+  margin-top:5px;
+  white-space:pre-wrap;
+}
+
+.location-list{
+  display:grid;
+  gap:10px;
+}
+
+
+/* =========================
+   SEÇÕES
+========================= */
+
 section{
   display:none;
 }
@@ -224,6 +250,11 @@ section{
 section.active{
   display:block;
 }
+
+
+/* =========================
+   NAVEGAÇÃO
+========================= */
 
 .nav{
   position:fixed;
@@ -233,17 +264,17 @@ section.active{
   background:var(--card);
   border-top:1px solid var(--line);
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  padding:8px 8px calc(8px + env(safe-area-inset-bottom));
+  grid-template-columns:repeat(5,1fr);
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
   z-index:5;
 }
 
 .nav button{
   background:transparent;
   color:var(--muted);
-  padding:8px;
+  padding:8px 3px;
   border-radius:12px;
-  font-size:12px;
+  font-size:11px;
 }
 
 .nav button.active{
@@ -260,7 +291,7 @@ section.active{
 .fab{
   position:fixed;
   right:20px;
-  bottom:90px;
+  bottom:100px;
   width:58px;
   height:58px;
   border-radius:20px;
@@ -283,7 +314,7 @@ section.active{
 .fab-menu{
   position:fixed;
   right:20px;
-  bottom:158px;
+  bottom:168px;
   display:flex;
   flex-direction:column;
   align-items:flex-end;
@@ -326,6 +357,10 @@ section.active{
   font-size:20px;
 }
 
+
+/* =========================
+   CALENDÁRIO
+========================= */
 
 .calendar-head{
   display:flex;
@@ -375,6 +410,11 @@ section.active{
   outline-offset:1px;
 }
 
+
+/* =========================
+   NOTAS
+========================= */
+
 .notes{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -393,6 +433,11 @@ section.active{
   color:var(--muted);
   font-size:14px;
 }
+
+
+/* =========================
+   FORMULÁRIOS
+========================= */
 
 input,textarea,select{
   width:100%;
@@ -442,6 +487,11 @@ textarea{
   flex:1;
 }
 
+
+/* =========================
+   MODO ESCURO
+========================= */
+
 body.dark{
   --bg:#0b1220;
   --card:#111827;
@@ -450,6 +500,11 @@ body.dark{
   --line:#263247;
   --soft:#172554;
 }
+
+
+/* =========================
+   DESKTOP
+========================= */
 
 @media(min-width:650px){
 
@@ -464,6 +519,15 @@ body.dark{
 
   .notes{
     grid-template-columns:repeat(3,1fr);
+  }
+
+  .nav{
+    max-width:760px;
+    margin:auto;
+    left:50%;
+    transform:translateX(-50%);
+    border-left:1px solid var(--line);
+    border-right:1px solid var(--line);
   }
 
 }
@@ -761,6 +825,55 @@ body.dark{
 
 </section>
 
+
+<!-- =========================
+     LOCALIZAÇÕES
+========================= -->
+
+<section id="locations">
+
+  <div class="card">
+
+    <div class="row">
+
+      <div>
+
+        <h2 style="margin-top:0">
+          📍 Localizações
+        </h2>
+
+        <div
+          class="muted"
+          style="font-size:13px">
+
+          Locais fixos salvos para você.
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="primary"
+        data-new="location">
+
+        + Nova
+
+      </button>
+
+    </div>
+
+
+    <div
+      id="locationsList"
+      class="location-list">
+
+    </div>
+
+  </div>
+
+</section>
+
 </div>
 
 
@@ -771,6 +884,7 @@ body.dark{
 <div
   class="fab-menu"
   id="fabMenu">
+
 
   <button
     class="fab-option"
@@ -810,6 +924,19 @@ body.dark{
 
   </button>
 
+
+  <button
+    class="fab-option"
+    data-fab-new="location">
+
+    <span>
+      📍
+    </span>
+
+    Localização
+
+  </button>
+
 </div>
 
 
@@ -820,7 +947,9 @@ body.dark{
 <button
   class="fab"
   id="fab">
+
   +
+
 </button>
 
 
@@ -829,6 +958,7 @@ body.dark{
 ========================= -->
 
 <nav class="nav">
+
 
   <button
     class="active"
@@ -863,11 +993,19 @@ body.dark{
 
   </button>
 
+
+  <button data-go="locations">
+
+    📍<br>
+    Locais
+
+  </button>
+
 </nav>
 
 
 <!-- =========================
-     JANELA DE ADICIONAR / EDITAR
+     MODAL
 ========================= -->
 
 <div
@@ -960,7 +1098,8 @@ let D = {
 
   events: [],
   tasks: [],
-  notes: []
+  notes: [],
+  locations: []
 
 };
 
@@ -1078,7 +1217,7 @@ function fmt(date){
 
 
 /* =========================
-   ABRIR GOOGLE MAPS
+   GOOGLE MAPS
 ========================= */
 
 function openMaps(location){
@@ -1266,16 +1405,19 @@ function render(){
           <input
             type="checkbox"
             data-toggle-event="${esc(e.id)}"
-            ${e.done ? "checked" : ""}
-          >
+            ${e.done ? "checked" : ""}>
 
-          <div
-            style="flex:1"
-            class="${e.done ? "done" : ""}"
-          >
+          <div style="flex:1">
 
-            <div class="item-title">
+            <div
+              class="item-title ${
+                e.done
+                ? "done"
+                : ""
+              }">
+
               ${esc(e.title)}
+
             </div>
 
             <small>
@@ -1305,24 +1447,6 @@ function render(){
           </div>
 
         </div>
-
-
-        ${
-          e.notes
-          ?
-
-          `<div
-            class="muted"
-            style="margin-top:7px">
-
-            ${esc(e.notes)}
-
-          </div>`
-
-          :
-
-          ""
-        }
 
 
         <div class="item-actions">
@@ -1379,7 +1503,9 @@ function render(){
     `;
 
 
-  /* TAREFAS */
+  /* =========================
+     TAREFAS
+  ========================= */
 
   $("#today").innerHTML =
     D.tasks.length
@@ -1390,9 +1516,9 @@ function render(){
       .sort((a,b) => {
 
         const ordem = {
-          "Alta": 1,
-          "Normal": 2,
-          "Baixa": 3
+          "Alta":1,
+          "Normal":2,
+          "Baixa":3
         };
 
         return (
@@ -1415,7 +1541,9 @@ function render(){
     `;
 
 
-  /* TODAS AS TAREFAS */
+  /* =========================
+     TODAS AS TAREFAS
+  ========================= */
 
   $("#tasksList").innerHTML =
     D.tasks.length
@@ -1426,9 +1554,9 @@ function render(){
       .sort((a,b) => {
 
         const ordem = {
-          "Alta": 1,
-          "Normal": 2,
-          "Baixa": 3
+          "Alta":1,
+          "Normal":2,
+          "Baixa":3
         };
 
         return (
@@ -1457,7 +1585,6 @@ function render(){
 
   let events =
     [...D.events];
-
 
   if(selectedDate){
 
@@ -1499,16 +1626,19 @@ function render(){
           <input
             type="checkbox"
             data-toggle-event="${esc(e.id)}"
-            ${e.done ? "checked" : ""}
-          >
+            ${e.done ? "checked" : ""}>
 
-          <div
-            style="flex:1"
-            class="${e.done ? "done" : ""}"
-          >
+          <div style="flex:1">
 
-            <div class="item-title">
+            <div
+              class="item-title ${
+                e.done
+                ? "done"
+                : ""
+              }">
+
               ${esc(e.title)}
+
             </div>
 
             <small>
@@ -1620,7 +1750,9 @@ function render(){
     `;
 
 
-  /* TÍTULO DOS COMPROMISSOS */
+  /* =========================
+     TÍTULO EVENTOS
+  ========================= */
 
   if(selectedDate){
 
@@ -1642,15 +1774,15 @@ function render(){
   }
 
 
-  /* CALENDÁRIO */
+  /* =========================
+     CALENDÁRIO
+  ========================= */
 
   let y =
     M.getFullYear();
 
-
   let m =
     M.getMonth();
-
 
   let days =
     new Date(
@@ -1658,7 +1790,6 @@ function render(){
       m + 1,
       0
     ).getDate();
-
 
   let first =
     new Date(
@@ -1753,7 +1884,9 @@ function render(){
     c;
 
 
-  /* NOTAS */
+  /* =========================
+     NOTAS
+  ========================= */
 
   let q =
     (
@@ -1830,6 +1963,98 @@ function render(){
 
       <div class="muted">
         Nenhuma anotação encontrada.
+      </div>
+
+    `;
+
+
+  /* =========================
+     LOCALIZAÇÕES
+  ========================= */
+
+  $("#locationsList").innerHTML =
+    D.locations.length
+
+    ?
+
+    [...D.locations]
+      .sort(
+        (a,b) =>
+          (
+            a.title || ""
+          )
+          .localeCompare(
+            b.title || ""
+          )
+      )
+      .map(x => `
+
+        <div class="item">
+
+          <div class="row">
+
+            <div style="flex:1">
+
+              <div class="location-icon">
+                📍
+              </div>
+
+              <div class="item-title">
+                ${esc(x.title)}
+              </div>
+
+              <div class="location-address">
+                ${esc(x.address)}
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="item-actions">
+
+            <button
+              type="button"
+              class="map-button"
+              data-maps="${esc(x.address)}">
+
+              📍 Ver no mapa
+
+            </button>
+
+
+            <button
+              class="edit"
+              data-edit-location="${esc(x.id)}">
+
+              ✏️ Editar
+
+            </button>
+
+
+            <button
+              class="danger"
+              data-dl="${esc(x.id)}">
+
+              🗑️ Excluir
+
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join("")
+
+    :
+
+    `
+
+      <div class="muted">
+
+        Nenhuma localização cadastrada.
+
       </div>
 
     `;
@@ -1950,6 +2175,10 @@ function open(
     );
 
 
+  /* =========================
+     TÍTULO
+  ========================= */
+
   $("#mtitle").textContent =
 
     edit
@@ -1968,7 +2197,14 @@ function open(
       "Editar tarefa"
 
       :
+
+      type == "note"
+      ?
       "Editar anotação"
+
+      :
+
+      "Editar localização"
     )
 
     :
@@ -1985,7 +2221,14 @@ function open(
       "Nova tarefa"
 
       :
+
+      type == "note"
+      ?
       "Nova anotação"
+
+      :
+
+      "Nova localização"
     );
 
 
@@ -2278,6 +2521,85 @@ function open(
   }
 
 
+  /* =========================
+     LOCALIZAÇÃO
+  ========================= */
+
+  if(
+    type == "location"
+  ){
+
+    f.innerHTML = `
+
+      <label>
+
+        Nome do local
+
+        <input
+          name="title"
+          required
+          placeholder="Ex.: Empresa"
+          value="${esc(
+            edit?.title ||
+            ""
+          )}">
+
+      </label>
+
+
+      <label>
+
+        📍 Endereço / localização
+
+        <textarea
+          name="address"
+          required
+          placeholder="Ex.: Avenida Paulista, 1000, São Paulo - SP">${esc(
+            edit?.address ||
+            ""
+          )}</textarea>
+
+      </label>
+
+
+      <div
+        class="muted"
+        style="
+          font-size:13px;
+          margin-bottom:12px;
+        ">
+
+        Essa localização ficará salva como um local fixo e não criará nenhum compromisso.
+
+      </div>
+
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="icon"
+          id="cancel">
+
+          Cancelar
+
+        </button>
+
+
+        <button
+          class="primary">
+
+          💾 Salvar
+
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
   $("#cancel").onclick =
     close;
 
@@ -2417,7 +2739,9 @@ $("#form").onsubmit =
 
     try{
 
-      /* EDITANDO */
+      /* =========================
+         EDITANDO
+      ========================= */
 
       if(
         EDIT_ID
@@ -2446,12 +2770,8 @@ $("#form").onsubmit =
 
 
         /*
-          IMPORTANTE:
-
-          Se for um compromisso,
-          mantemos o "done" existente.
-          Assim editar o compromisso
-          não desmarca o realizado.
+          Mantém o status concluído
+          do compromisso quando editado.
         */
 
         if(
@@ -2484,7 +2804,9 @@ $("#form").onsubmit =
       }
 
 
-      /* NOVO */
+      /* =========================
+         NOVO
+      ========================= */
 
       else{
 
@@ -2544,7 +2866,9 @@ document.addEventListener(
   "click",
   async e => {
 
-    /* ABRIR MAPS */
+    /* =========================
+       MAPS
+    ========================= */
 
     let map =
       e.target.closest(
@@ -2563,7 +2887,9 @@ document.addEventListener(
     }
 
 
-    /* NOVO */
+    /* =========================
+       NOVO
+    ========================= */
 
     let n =
       e.target.closest(
@@ -2582,7 +2908,9 @@ document.addEventListener(
     }
 
 
-    /* EXCLUIR TAREFA */
+    /* =========================
+       EXCLUIR TAREFA
+    ========================= */
 
     let d =
       e.target.closest(
@@ -2619,7 +2947,9 @@ document.addEventListener(
     }
 
 
-    /* EXCLUIR EVENTO */
+    /* =========================
+       EXCLUIR EVENTO
+    ========================= */
 
     let de =
       e.target.closest(
@@ -2656,7 +2986,9 @@ document.addEventListener(
     }
 
 
-    /* EXCLUIR NOTA */
+    /* =========================
+       EXCLUIR NOTA
+    ========================= */
 
     let dn =
       e.target.closest(
@@ -2694,36 +3026,40 @@ document.addEventListener(
 
 
     /* =========================
-       CONCLUIR COMPROMISSO
+       EXCLUIR LOCALIZAÇÃO
     ========================= */
 
-    let eventToggle =
+    let dl =
       e.target.closest(
-        "[data-toggle-event]"
+        "[data-dl]"
       );
 
 
-    if(eventToggle){
+    if(dl){
 
-      try{
+      if(
+        confirm(
+          "Excluir esta localização?"
+        )
+      ){
 
-        await updateDoc(
-          eventToggle.dataset.toggleEvent,
-          {
-            done:
-              eventToggle.checked
-          }
-        );
+        try{
 
-      }catch(err){
+          await delDoc(
+            dl.dataset.dl
+          );
 
-        console.error(
-          err
-        );
+        }catch(err){
 
-        alert(
-          "Erro ao atualizar o compromisso."
-        );
+          console.error(
+            err
+          );
+
+          alert(
+            "Erro ao excluir a localização."
+          );
+
+        }
 
       }
 
@@ -2767,7 +3103,48 @@ document.addEventListener(
     }
 
 
-    /* EDITAR EVENTO */
+    /* =========================
+       CONCLUIR COMPROMISSO
+    ========================= */
+
+    let te =
+      e.target.closest(
+        "[data-toggle-event]"
+      );
+
+
+    if(te){
+
+      try{
+
+        await updateDoc(
+          te.dataset.toggleEvent,
+          {
+            done:
+              te.checked
+          }
+        );
+
+      }catch(err){
+
+        console.error(
+          err
+        );
+
+        alert(
+          "Erro ao atualizar o compromisso."
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    /* =========================
+       EDITAR EVENTO
+    ========================= */
 
     let ee =
       e.target.closest(
@@ -2800,7 +3177,9 @@ document.addEventListener(
     }
 
 
-    /* EDITAR TAREFA */
+    /* =========================
+       EDITAR TAREFA
+    ========================= */
 
     let et =
       e.target.closest(
@@ -2833,7 +3212,9 @@ document.addEventListener(
     }
 
 
-    /* EDITAR NOTA */
+    /* =========================
+       EDITAR NOTA
+    ========================= */
 
     let en =
       e.target.closest(
@@ -2866,7 +3247,44 @@ document.addEventListener(
     }
 
 
-    /* CLICAR NO DIA DO CALENDÁRIO */
+    /* =========================
+       EDITAR LOCALIZAÇÃO
+    ========================= */
+
+    let el =
+      e.target.closest(
+        "[data-edit-location]"
+      );
+
+
+    if(el){
+
+      let x =
+        D.locations.find(
+          v =>
+            v.id ==
+            el.dataset.editLocation
+        );
+
+
+      if(x){
+
+        open(
+          "location",
+          "",
+          x
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    /* =========================
+       DIA DO CALENDÁRIO
+    ========================= */
 
     let day =
       e.target.closest(
@@ -2890,7 +3308,7 @@ document.addEventListener(
 
 
 /* =========================
-   VER TODOS OS COMPROMISSOS
+   VER TODOS
 ========================= */
 
 $("#showAll").onclick =
@@ -2948,12 +3366,10 @@ $("#search").oninput =
 
 /* =========================
    BOTÃO +
-   MENU RÁPIDO
 ========================= */
 
 const fab =
   $("#fab");
-
 
 const fabMenu =
   $("#fabMenu");
@@ -2973,7 +3389,9 @@ fab.onclick =
   };
 
 
-/* OPÇÕES DO MENU */
+/* =========================
+   OPÇÕES DO +
+========================= */
 
 $$("[data-fab-new]")
   .forEach(
@@ -3017,7 +3435,8 @@ function listen(){
 
           events: [],
           tasks: [],
-          notes: []
+          notes: [],
+          locations: []
 
         };
 
@@ -3061,6 +3480,17 @@ function listen(){
             ){
 
               D.notes.push(
+                x
+              );
+
+            }
+
+            else if(
+              x.type ==
+              "location"
+            ){
+
+              D.locations.push(
                 x
               );
 
