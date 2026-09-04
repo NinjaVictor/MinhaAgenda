@@ -1099,14 +1099,6 @@ function openMaps(location){
     "https://www.google.com/maps/search/?api=1&query=" +
     query;
 
-  /*
-    Primeiro tenta abrir o aplicativo
-    Google Maps.
-
-    Se o aplicativo não responder,
-    abre o Google Maps pelo navegador.
-  */
-
   window.location.href =
     mapsApp;
 
@@ -1239,7 +1231,9 @@ function render(){
     D.notes.length;
 
 
-  /* COMPROMISSOS DE HOJE */
+  /* =========================
+     COMPROMISSOS DE HOJE
+  ========================= */
 
   let ev =
     [...D.events]
@@ -1267,33 +1261,68 @@ function render(){
 
       <div class="item">
 
-        <div class="item-title">
-          ${esc(e.title)}
+        <div class="task-line">
+
+          <input
+            type="checkbox"
+            data-toggle-event="${esc(e.id)}"
+            ${e.done ? "checked" : ""}
+          >
+
+          <div
+            style="flex:1"
+            class="${e.done ? "done" : ""}"
+          >
+
+            <div class="item-title">
+              ${esc(e.title)}
+            </div>
+
+            <small>
+
+              ${fmt(e.date)}
+
+              ${
+                e.time
+                ?
+                " • " +
+                esc(e.time)
+                :
+                ""
+              }
+
+              ${
+                e.location
+                ?
+                " • 📍 " +
+                esc(e.location)
+                :
+                ""
+              }
+
+            </small>
+
+          </div>
+
         </div>
 
-        <small>
 
-          ${fmt(e.date)}
+        ${
+          e.notes
+          ?
 
-          ${
-            e.time
-            ?
-            " • " +
-            esc(e.time)
-            :
-            ""
-          }
+          `<div
+            class="muted"
+            style="margin-top:7px">
 
-          ${
-            e.location
-            ?
-            " • 📍 " +
-            esc(e.location)
-            :
-            ""
-          }
+            ${esc(e.notes)}
 
-        </small>
+          </div>`
+
+          :
+
+          ""
+        }
 
 
         <div class="item-actions">
@@ -1422,10 +1451,13 @@ function render(){
     `;
 
 
-  /* EVENTOS */
+  /* =========================
+     EVENTOS
+  ========================= */
 
   let events =
     [...D.events];
+
 
   if(selectedDate){
 
@@ -1462,33 +1494,50 @@ function render(){
 
       <div class="item">
 
-        <div class="item-title">
-          ${esc(e.title)}
+        <div class="task-line">
+
+          <input
+            type="checkbox"
+            data-toggle-event="${esc(e.id)}"
+            ${e.done ? "checked" : ""}
+          >
+
+          <div
+            style="flex:1"
+            class="${e.done ? "done" : ""}"
+          >
+
+            <div class="item-title">
+              ${esc(e.title)}
+            </div>
+
+            <small>
+
+              📅 ${fmt(e.date)}
+
+              ${
+                e.time
+                ?
+                " • ⏰ " +
+                esc(e.time)
+                :
+                ""
+              }
+
+              ${
+                e.location
+                ?
+                " • 📍 " +
+                esc(e.location)
+                :
+                ""
+              }
+
+            </small>
+
+          </div>
+
         </div>
-
-        <small>
-
-          📅 ${fmt(e.date)}
-
-          ${
-            e.time
-            ?
-            " • ⏰ " +
-            esc(e.time)
-            :
-            ""
-          }
-
-          ${
-            e.location
-            ?
-            " • 📍 " +
-            esc(e.location)
-            :
-            ""
-          }
-
-        </small>
 
 
         ${
@@ -2396,6 +2445,37 @@ $("#form").onsubmit =
         }
 
 
+        /*
+          IMPORTANTE:
+
+          Se for um compromisso,
+          mantemos o "done" existente.
+          Assim editar o compromisso
+          não desmarca o realizado.
+        */
+
+        if(
+          TYPE == "event"
+        ){
+
+          const old =
+            D.events.find(
+              x =>
+                x.id ==
+                EDIT_ID
+            );
+
+
+          o.done =
+            old
+            ?
+            !!old.done
+            :
+            false;
+
+        }
+
+
         await updateDoc(
           EDIT_ID,
           o
@@ -2410,6 +2490,16 @@ $("#form").onsubmit =
 
         if(
           TYPE == "task"
+        ){
+
+          o.done =
+            false;
+
+        }
+
+
+        if(
+          TYPE == "event"
         ){
 
           o.done =
@@ -2603,7 +2693,48 @@ document.addEventListener(
     }
 
 
-    /* CONCLUIR TAREFA */
+    /* =========================
+       CONCLUIR COMPROMISSO
+    ========================= */
+
+    let eventToggle =
+      e.target.closest(
+        "[data-toggle-event]"
+      );
+
+
+    if(eventToggle){
+
+      try{
+
+        await updateDoc(
+          eventToggle.dataset.toggleEvent,
+          {
+            done:
+              eventToggle.checked
+          }
+        );
+
+      }catch(err){
+
+        console.error(
+          err
+        );
+
+        alert(
+          "Erro ao atualizar o compromisso."
+        );
+
+      }
+
+      return;
+
+    }
+
+
+    /* =========================
+       CONCLUIR TAREFA
+    ========================= */
 
     let tg =
       e.target.closest(
